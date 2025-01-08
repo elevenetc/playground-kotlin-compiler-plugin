@@ -1,11 +1,11 @@
 package addProperty
 
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
-import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import utils.Option
 
 @OptIn(ExperimentalCompilerApi::class)
 class AddPropertyCommandLineProcessor : CommandLineProcessor {
@@ -39,12 +39,4 @@ class AddPropertyCommandLineProcessor : CommandLineProcessor {
             else -> error("Unknown plugin option: ${option.optionName}")
         }
     }
-}
-
-internal fun Option(name: String, description: String): CliOption {
-    return CliOption(
-        optionName = name,
-        valueDescription = description,
-        description = description,
-    )
 }
