@@ -7,13 +7,13 @@ import org.junit.rules.TemporaryFolder
 import utils.*
 import kotlin.test.assertEquals
 
+@OptIn(ExperimentalCompilerApi::class)
 class AddPrintPluginTest {
 
     @Rule
     @JvmField
     var tempDir = TemporaryFolder()
 
-    @OptIn(ExperimentalCompilerApi::class)
     @Test
     fun `test - add println to all methods of class`() {
 
