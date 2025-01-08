@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.config.Services
 internal fun compile(
     sourceInfo: SourceInfo,
     registrar: CompilerPluginRegistrar,
-    processor: CommandLineProcessor,
-    options: CommandLineProcessor.() -> List<PluginOption>
+    processor: CommandLineProcessor? = null,
+    options: CommandLineProcessor.() -> List<PluginOption> = { emptyList() }
 ): JvmCompilationResult {
     return prepareCompilation(
         sourceInfo,
@@ -61,16 +61,18 @@ fun compile(
 internal fun prepareCompilation(
     sourceInfo: SourceInfo,
     registrar: CompilerPluginRegistrar,
-    processor: CommandLineProcessor,
+    processor: CommandLineProcessor? = null,
     options: CommandLineProcessor.() -> List<PluginOption>
 ): KotlinCompilation {
     return KotlinCompilation().apply {
         workingDir = sourceInfo.tempDir.root
         compilerPluginRegistrars = listOf(registrar)
-        commandLineProcessors = listOf(processor)
-        pluginOptions = options.invoke(processor)
         inheritClassPath = true
         sources = sourceInfo.sourceFiles.toList()
         verbose = true
+        if (processor != null) {
+            commandLineProcessors = listOf(processor)
+            pluginOptions = options.invoke(processor)
+        }
     }
 }
