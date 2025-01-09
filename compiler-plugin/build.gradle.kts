@@ -15,6 +15,7 @@ dependencies {
 
     testImplementation(kotlin("test"))
     testImplementation(libs.kotlin.stdlib)
+    testImplementation(libs.kotlin.reflect)
     testImplementation(libs.kotlin.compilerEmbeddable)
     testImplementation(libs.kotlin.compilerTestFramework)
     testImplementation(libs.kotlin.test)

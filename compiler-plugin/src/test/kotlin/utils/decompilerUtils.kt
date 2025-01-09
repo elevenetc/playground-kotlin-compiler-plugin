@@ -13,8 +13,18 @@ import utils.decompile.dropKotlinMetadata
 @OptIn(ExperimentalCompilerApi::class)
 fun JvmCompilationResult.decompileClassAndTrim(): String {
     val clazz = this.generatedFiles.filter { it.name.endsWith(".class") }.firstOrError()
-    val decompiled = decompileClass(clazz.absolutePath)
-    return decompiled.dropCfrComment().dropKotlinMetadata().dropEmptyLines()
+    return decompileClassAndTrim(clazz.absolutePath)
+}
+
+@OptIn(ExperimentalCompilerApi::class)
+fun JvmCompilationResult.decompileClassesAndTrim(): Map<String, String> {
+    return this.generatedFiles.filter { file -> file.name.endsWith(".class") }.associate { file ->
+        file.name to decompileClassAndTrim(file.absolutePath)
+    }
+}
+
+fun decompileClassAndTrim(path: String): String {
+    return decompileClass(path).dropCfrComment().dropKotlinMetadata().dropEmptyLines()
 }
 
 fun decompileClass(classFilePath: String, options: Map<String, String> = emptyMap()): String {

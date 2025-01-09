@@ -18,6 +18,7 @@ kotlin-compilerEmbeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-emb
 kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 kotlin-compilerTestFramework = { module = "org.jetbrains.kotlin:kotlin-compiler-internal-test-framework", version.ref = "kotlin"}
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin"}
 junitJupiter = { module = "org.junit.jupiter:junit-jupiter", version = "5.10.0" }
 junit = { module = "junit:junit", version = "4.13.2" }

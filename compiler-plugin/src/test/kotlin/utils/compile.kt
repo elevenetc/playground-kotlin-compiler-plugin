@@ -12,17 +12,20 @@ import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.Services
+import java.io.File
 
 
 @OptIn(ExperimentalCompilerApi::class)
 internal fun compile(
     sourceInfo: SourceInfo,
-    registrar: CompilerPluginRegistrar,
+    registrar: CompilerPluginRegistrar? = null,
     processor: CommandLineProcessor? = null,
+    classpath: List<File> = emptyList(),
     options: CommandLineProcessor.() -> List<PluginOption> = { emptyList() }
 ): JvmCompilationResult {
     return prepareCompilation(
         sourceInfo,
+        classpath,
         registrar,
         processor,
         options
@@ -41,14 +44,14 @@ fun compile(
     val args = K2JVMCompilerArguments().apply {
         enableDebugMode = true
         freeArgs = filePaths
-        noStdlib = true
-        noReflect = true
+        //noReflect = true
         includeRuntime = false
         moduleName = "testModule"
         verbose = true
         kotlinHome = null
         script = false
         version = true
+        noStdlib = true
         disableStandardScript = true
         disableDefaultScriptingPlugin = true
         destination = "build/classes/kotlin/main"
@@ -60,16 +63,18 @@ fun compile(
 @OptIn(ExperimentalCompilerApi::class)
 internal fun prepareCompilation(
     sourceInfo: SourceInfo,
-    registrar: CompilerPluginRegistrar,
+    classpaths: List<File> = emptyList(),
+    registrar: CompilerPluginRegistrar? = null,
     processor: CommandLineProcessor? = null,
-    options: CommandLineProcessor.() -> List<PluginOption>
+    options: CommandLineProcessor.() -> List<PluginOption> = { emptyList() }
 ): KotlinCompilation {
     return KotlinCompilation().apply {
         workingDir = sourceInfo.tempDir.root
-        compilerPluginRegistrars = listOf(registrar)
+        compilerPluginRegistrars = if (registrar != null) listOf(registrar) else emptyList()
         inheritClassPath = true
         sources = sourceInfo.sourceFiles.toList()
         verbose = true
+        this.classpaths = classpaths
         if (processor != null) {
             commandLineProcessors = listOf(processor)
             pluginOptions = options.invoke(processor)
