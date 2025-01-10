@@ -25,10 +25,7 @@ class AddPropertyPluginTest {
         @Language("java")
         val expected = """
             public final class Foo {
-                public final int $propertyName;
-                public Foo() {
-                    this.$propertyName = $propertyValue;
-                }
+                public int $propertyName = $propertyValue;
             }
         """.trimIndent()
 
@@ -47,10 +44,7 @@ class AddPropertyPluginTest {
             import org.jetbrains.annotations.NotNull;
             public final class Foo {
                 @NotNull
-                public final $propertyType $propertyName;
-                public Foo() {
-                    this.$propertyName = "$propertyValue";
-                }
+                public $propertyType $propertyName = "$propertyValue";
             }
         """.trimIndent()
 

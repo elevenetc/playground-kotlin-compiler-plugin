@@ -8,21 +8,18 @@ import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.FqName.topLevel
+import org.jetbrains.kotlin.name.Name.identifier
 
 @OptIn(UnsafeDuringIrConstructionAPI::class)
-fun addPrintlnBody(printlnValue: String, func: IrFunction, pluginContext: IrPluginContext) {
+fun addPrintlnBody(printlnValue: String, func: IrFunction, context: IrPluginContext) {
 
-    val printId = CallableId(FqName.topLevel(Name.identifier("kotlin.io")), Name.identifier("println"))
-    val printlnSymbol = pluginContext
-        .referenceFunctions(printId)
-        .first { it.owner.valueParameters.size == 1 }
+    val printId = CallableId(topLevel(identifier("kotlin.io")), identifier("println"))
+    val printlnSymbol = context.referenceFunctions(printId).first { it.owner.valueParameters.size == 1 }
 
-    val builder = DeclarationIrBuilder(pluginContext, func.symbol)
-    val body = builder.irBlockBody {}
-    val element = builder.irCall(printlnSymbol, pluginContext.irBuiltIns.stringType, 1)
-    element.putValueArgument(0, builder.irString(printlnValue))
-    body.statements.add(element)
-    func.body = body
+    func.body = DeclarationIrBuilder(context, func.symbol).irBlockBody {
+        val call = irCall(printlnSymbol, context.irBuiltIns.stringType, 1)
+        call.putValueArgument(0, irString(printlnValue))
+        +call
+    }
 }
