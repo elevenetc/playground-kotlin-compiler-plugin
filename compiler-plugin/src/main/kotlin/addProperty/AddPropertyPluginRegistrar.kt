@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 
 @OptIn(ExperimentalCompilerApi::class)
 class AddPropertyPluginRegistrar : CompilerPluginRegistrar() {
@@ -21,8 +20,7 @@ class AddPropertyPluginRegistrar : CompilerPluginRegistrar() {
             AddPropertyPluginExtension(
                 propertyName,
                 propertyType,
-                propertyValue,
-                IrFactoryImpl
+                propertyValue
             )
         )
     }

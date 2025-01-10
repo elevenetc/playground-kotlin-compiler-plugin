@@ -18,7 +18,6 @@ import utils.fqNameToIrType
 class AddMethodTransformer(
     private val methodName: String,
     private val isStatic: Boolean,
-    private val irFactory: IrFactory,
     private val pluginContext: IrPluginContext
 ) : IrElementTransformerVoidWithContext() {
 
@@ -32,7 +31,7 @@ class AddMethodTransformer(
         val symbol = IrSimpleFunctionSymbolImpl()
         val returnType = fqNameToIrType(FqName("kotlin.Unit"), pluginContext)
 
-        val irFunction = irFactory.createSimpleFunction(
+        val irFunction = pluginContext.irFactory.createSimpleFunction(
             startOffset = irClass.startOffset,
             endOffset = irClass.endOffset,
             origin = IrDeclarationOrigin.DEFINED,

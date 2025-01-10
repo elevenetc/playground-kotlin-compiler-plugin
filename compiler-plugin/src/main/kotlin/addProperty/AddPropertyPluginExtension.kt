@@ -8,8 +8,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 class AddPropertyPluginExtension(
     private val propertyName: String,
     private val propertyType: String,
-    private val propertyValue: String,
-    private val irFactory: IrFactoryImpl
+    private val propertyValue: String
 ) : IrGenerationExtension {
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         val s: String
@@ -18,7 +17,6 @@ class AddPropertyPluginExtension(
                 propertyName,
                 propertyType,
                 propertyValue,
-                irFactory,
                 pluginContext
             ), null
         )

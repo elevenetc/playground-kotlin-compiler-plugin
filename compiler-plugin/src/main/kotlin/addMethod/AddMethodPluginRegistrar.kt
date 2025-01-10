@@ -19,8 +19,7 @@ class AddMethodPluginRegistrar : CompilerPluginRegistrar() {
         IrGenerationExtension.registerExtension(
             AddMethodPluginExtension(
                 methodName,
-                isStatic,
-                IrFactoryImpl
+                isStatic
             )
         )
     }

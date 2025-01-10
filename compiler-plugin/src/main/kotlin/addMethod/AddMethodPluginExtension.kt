@@ -7,15 +7,13 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 
 class AddMethodPluginExtension(
     private val methodName: String,
-    private val isStatic: Boolean,
-    private val irFactory: IrFactoryImpl
+    private val isStatic: Boolean
 ) : IrGenerationExtension {
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         moduleFragment.transform(
             AddMethodTransformer(
                 methodName,
                 isStatic,
-                irFactory,
                 pluginContext
             ), null
         )
