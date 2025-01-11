@@ -2,59 +2,37 @@ package addDependencyCallToMethod
 
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irBlockBody
-import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irGetObject
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.util.companionObject
-import org.jetbrains.kotlin.ir.util.properties
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.Name.identifier
+import utils.irCompanionPropertyCall
+import utils.referenceCompanionPropertyFunction
+import utils.withDeclarationIrBuilder
 
 class AddDependencyCallToMethodTransformer(
-    private val pluginContext: IrPluginContext
+    private val context: IrPluginContext
 ) : IrElementTransformerVoidWithContext() {
 
     companion object {
         const val CLASS_NAME = "IntValueHolder"
-        const val STATIC_METHOD = "incrementAndGetValue"
-        const val STATIC_PROPERTY = "instance"
+        const val PROPERTY_NAME = "instance"
+        const val METHOD_NAME = "incrementAndGetValue"
     }
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
     override fun visitFunctionNew(declaration: IrFunction): IrStatement {
         if (declaration is IrConstructor) return super.visitFunctionNew(declaration)
 
-        val builder = DeclarationIrBuilder(pluginContext, declaration.symbol)
-        val dependencyClassId = ClassId.topLevel(FqName(CLASS_NAME))
-        val dependencyClassSymbol = pluginContext.referenceClass(dependencyClassId) ?: error("could not find class")
+        val (
+            companionObjectSymbol,
+            propertyGetter,
+            funcSymbol
+        ) = context.referenceCompanionPropertyFunction(CLASS_NAME, PROPERTY_NAME, METHOD_NAME)
 
-        val companionObjectSymbol = pluginContext.referenceClass(dependencyClassId)?.owner?.companionObject()
-        val instanceGetter =
-            companionObjectSymbol?.properties?.firstOrNull { it.name == Name.identifier(STATIC_PROPERTY) }?.getter
-                ?: error("$STATIC_PROPERTY not found")
-
-        val doCallCallableId = CallableId(dependencyClassId, identifier(STATIC_METHOD))
-        val doCallFunctionSymbol = pluginContext.referenceFunctions(doCallCallableId)
-            .firstOrNull() ?: error("Function '$STATIC_METHOD' not found in Foo")
-
-        val instAccess = builder.irCall(instanceGetter).apply {
-            dispatchReceiver = builder.irGetObject(dependencyClassSymbol.owner.companionObject()!!.symbol)
-        }
-
-        val doCallInvocation = builder.irCall(doCallFunctionSymbol).apply {
-            dispatchReceiver = instAccess
-        }
-
-        declaration.body = builder.irBlockBody {
-            +doCallInvocation
+        context.withDeclarationIrBuilder(declaration) {
+            declaration.body = irBlockBody {
+                +irCompanionPropertyCall(companionObjectSymbol, propertyGetter, funcSymbol)
+            }
         }
 
         return super.visitFunctionNew(declaration)

@@ -8,12 +8,13 @@ import org.benf.cfr.reader.api.OutputSinkFactory.SinkType
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import utils.decompile.dropCfrComment
 import utils.decompile.dropKotlinMetadata
+import java.io.File
 
 
 @OptIn(ExperimentalCompilerApi::class)
 fun JvmCompilationResult.decompileClassAndTrim(): String {
-    val clazz = this.generatedFiles.filter { it.name.endsWith(".class") }.firstOrError()
-    return decompileClassAndTrim(clazz.absolutePath)
+    val file = this.generatedFiles.filter { it.name.endsWith(".class") }.firstOrError()
+    return decompileClassAndTrim(file)
 }
 
 @OptIn(ExperimentalCompilerApi::class)
@@ -23,8 +24,15 @@ fun JvmCompilationResult.decompileClassesAndTrim(): Map<String, String> {
     }
 }
 
-fun decompileClassAndTrim(path: String): String {
-    return decompileClass(path).dropCfrComment().dropKotlinMetadata().dropEmptyLines()
+fun decompileClassAndTrim(file: File): String {
+    return decompileClass(file.absolutePath).dropCfrComment().dropKotlinMetadata().dropEmptyLines()
+}
+
+@OptIn(ExperimentalCompilerApi::class)
+fun JvmCompilationResult.decompileClassAndTrim(fileName: String): String {
+    return decompileClass(
+        this.generatedFiles.first { it.name == fileName }.absolutePath
+    ).dropCfrComment().dropKotlinMetadata().dropEmptyLines()
 }
 
 fun decompileClass(classFilePath: String, options: Map<String, String> = emptyMap()): String {
@@ -40,7 +48,7 @@ fun decompileClass(classFilePath: String, options: Map<String, String> = emptyMa
 fun createOutputSink(result: StringBuilder): OutputSinkFactory {
 
     return object : OutputSinkFactory {
-        override fun <T : Any?> getSink(sinkType: SinkType, sinkClass: SinkClass): OutputSinkFactory.Sink<T>? {
+        override fun <T : Any?> getSink(sinkType: SinkType, sinkClass: SinkClass): OutputSinkFactory.Sink<T> {
             return if (sinkType == SinkType.JAVA) {
                 OutputSinkFactory.Sink { content ->
                     result.append(content)

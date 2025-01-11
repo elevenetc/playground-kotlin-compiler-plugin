@@ -7,6 +7,7 @@ import org.junit.rules.TemporaryFolder
 import utils.assertSuccess
 import utils.buildSourceInfo
 import utils.compile
+import utils.decompileClassAndTrim
 import utils.reflection.call
 import utils.reflection.get
 import utils.reflection.getCompanionProperty
@@ -72,5 +73,16 @@ class AddDependencyCallToMethodPluginTest {
         assertEquals(1, invValueHolder.get("value"))
         foo.call("bar")
         assertEquals(2, invValueHolder.get("value"))
+
+
+        val expected = """
+            public final class Foo {
+                public final void bar() {
+                    IntValueHolder.Companion.getInstance().incrementAndGetValue();
+                }
+            }
+        """.trimIndent()
+
+        assertEquals(expected, result.decompileClassAndTrim("Foo.class"))
     }
 }
