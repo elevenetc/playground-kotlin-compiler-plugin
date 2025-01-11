@@ -3,11 +3,12 @@ package utils.reflection
 import kotlin.reflect.KClass
 import kotlin.reflect.full.*
 
-fun Any.get(propertyName: String): Any? {
+@Suppress("UNCHECKED_CAST")
+fun <T> Any.get(propertyName: String): T {
     val kClass = this::class
     val property = kClass.declaredMemberProperties.find { it.name == propertyName }
         ?: throw NoSuchElementException("Property '$propertyName' not found in class ${kClass.simpleName}.")
-    return property.call(this)
+    return property.call(this) as T
 }
 
 fun Any.call(methodName: String): Any? {
