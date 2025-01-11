@@ -7,6 +7,8 @@ This repository contains basic examples demonstrating the use of Kotlin compiler
 - Add method to class: [implementation](compiler-plugin/src/main/kotlin/addMethod), [tests](compiler-plugin/src/test/kotlin/AddMethodPluginTest.kt)
 - Add argument to method: [implementation](compiler-plugin/src/main/kotlin/addMethodArgument), [tests](compiler-plugin/src/test/kotlin/AddMethodArgumentPluginTest.kt)
 - Add static call to a method: [implementation](compiler-plugin/src/main/kotlin/addDependencyCallToMethod), [tests](compiler-plugin/src/test/kotlin/AddDependencyCallToMethodPluginTest.kt)
+- Add call
+  logger: [implementation](compiler-plugin/src/main/kotlin/addCallLog), [tests](compiler-plugin/src/test/kotlin/AddCallLogPluginTest.kt)
 
 ## Test
 * Run `./gradlew check` to run all checks, including tests.
