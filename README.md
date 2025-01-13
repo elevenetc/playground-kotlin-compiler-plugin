@@ -11,4 +11,5 @@ This repository contains basic examples demonstrating the use of Kotlin compiler
   logger: [implementation](compiler-plugin/src/main/kotlin/addCallLog), [tests](compiler-plugin/src/test/kotlin/AddCallLogPluginTest.kt)
 
 ## Test
-* Run `./gradlew check` to run all checks, including tests.
+
+* Run `./gradlew :compiler-plugin:check` to run all checks, including tests.
