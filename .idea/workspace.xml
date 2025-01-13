@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="c160abbf-b597-4bf8-afbc-47da6d2c505d" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/call-logger/build.gradle.kts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/call-logger/settings.gradle.kts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/call-logger/src/main/kotlin/org/jetrbains/kotlin/CallLogger.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/compiler-plugin-gradle/settings.gradle.kts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/compiler-plugin-gradle/src/main/kotlin/org/jetbrains/kotlin/PlaygroundGradleSupportPlugin.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/compiler-plugin-gradle/src/test/kotlin/TempTest.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/compiler-plugin/settings.gradle.kts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sample/build.gradle.kts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sample/settings.gradle.kts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sample/src/main/kotlin/Main.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/Run_tests.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle.kts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/kotlin/App.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/buildSrc/build.gradle.kts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/buildSrc/settings.gradle.kts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/buildSrc/src/main/kotlin/kotlin-jvm.gradle.kts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/compiler-plugin-gradle/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/compiler-plugin-gradle/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/compiler-plugin/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/compiler-plugin/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/compiler-plugin/src/main/kotlin/addCallLog/AddCallLogPluginRegistrar.kt" beforeDir="false" afterPath="$PROJECT_DIR$/compiler-plugin/src/main/kotlin/addCallLog/AddCallLogPluginRegistrar.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/compiler-plugin/src/main/kotlin/addCallLog/AddCallLogTransformer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/compiler-plugin/src/main/kotlin/addCallLog/AddCallLogTransformer.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/compiler-plugin/src/test/kotlin/AddCallLogPluginTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/compiler-plugin/src/test/kotlin/AddCallLogPluginTest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/compiler-plugin/src/test/kotlin/CfrUtilsTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/compiler-plugin/src/test/kotlin/CfrUtilsTest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/compiler-plugin/src/test/kotlin/utils/decompile/dropCfrComment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/compiler-plugin/src/test/kotlin/utils/decompile/dropCfrComment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/compiler-plugin/src/test/kotlin/utils/decompilerUtils.kt" beforeDir="false" afterPath="$PROJECT_DIR$/compiler-plugin/src/test/kotlin/utils/decompilerUtils.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/libs.versions.toml" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/libs.versions.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/build.gradle.kts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/src/main/kotlin/Utilities.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/src/test/kotlin/UtilitiesTest.kt" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="root" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="root" type="f1a62948:ProjectNode" />
+                <item name="compiler-plugin-gradle" type="2d1252cf:ModuleNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="root" type="f1a62948:ProjectNode" />
+                <item name="compiler-plugin-gradle" type="2d1252cf:ModuleNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="root" type="f1a62948:ProjectNode" />
+                <item name="compiler-plugin-gradle" type="2d1252cf:ModuleNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="build" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="root" type="f1a62948:ProjectNode" />
+                <item name="compiler-plugin-gradle" type="2d1252cf:ModuleNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="plugin development" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="root" type="f1a62948:ProjectNode" />
+                <item name="compiler-plugin-gradle" type="2d1252cf:ModuleNode" />
+                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Kotlin Class" />
+        <option value="Kotlin File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="2rZykbbxrzu9F7xHsQ5iqI5HDf6" />
+  <component name="ProjectViewState">
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.AddCallLogPluginTest.executor": "Run",
+    "Gradle.AddCallLogPluginTest.test - log calls injected in the beginning and the end of body.executor": "Run",
+    "Gradle.Build playground-kotlin-compiler-plugin.executor": "Run",
+    "Gradle.CfrUtilsTest.test aaa.executor": "Run",
+    "Gradle.TempTest.test.executor": "Run",
+    "Gradle.Tests in 'compiler-plugin.test'.executor": "Run",
+    "Gradle.playground-kotlin-compiler-plugin [:compiler-plugin-gradle:validatePlugins].executor": "Run",
+    "Gradle.playground-kotlin-compiler-plugin [check].executor": "Run",
+    "Kotlin.MainKt (1).executor": "Debug",
+    "Kotlin.MainKt.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/eugene.levenetc/dev/playground-kotlin-compiler-plugin",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.16396104",
+    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager" selected="Gradle.AddCallLogPluginTest">
+    <configuration name="AddCallLogPluginTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":compiler-plugin:test" />
+            <option value="--tests" />
+            <option value="&quot;AddCallLogPluginTest&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="AddCallLogPluginTest.test - log calls injected in the beginning and the end of body" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":compiler-plugin:test" />
+            <option value="--tests" />
+            <option value="&quot;AddCallLogPluginTest.test - log calls injected in the beginning and the end of body&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="CfrUtilsTest.test aaa" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":compiler-plugin:test" />
+            <option value="--tests" />
+            <option value="&quot;CfrUtilsTest.test aaa&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="playground-kotlin-compiler-plugin [check]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="check" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="MainKt (1)" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="MainKt" />
+      <module name="sample.main" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="playground-kotlin-compiler-plugin" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="playground-kotlin-compiler-plugin" />
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Gradle.AddCallLogPluginTest" />
+        <item itemvalue="Gradle.playground-kotlin-compiler-plugin [check]" />
+        <item itemvalue="Kotlin.MainKt (1)" />
+        <item itemvalue="Gradle.AddCallLogPluginTest.test - log calls injected in the beginning and the end of body" />
+        <item itemvalue="Gradle.CfrUtilsTest.test aaa" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-fdfe4dae3a2d-intellij.indexing.shared.core-IU-243.22562.218" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c160abbf-b597-4bf8-afbc-47da6d2c505d" name="Changes" comment="" />
+      <created>1723538753371</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1723538753371</updated>
+      <workItem from="1736781037604" duration="8404000" />
+      <workItem from="1736792410310" duration="5060000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/compiler-plugin/src/test/kotlin/utils/decompilerUtils.kt</url>
+          <line>35</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/sample/src/main/kotlin/Main.kt</url>
+          <line>5</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/compiler-plugin/src/test/kotlin/AddCallLogPluginTest.kt</url>
+          <line>42</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

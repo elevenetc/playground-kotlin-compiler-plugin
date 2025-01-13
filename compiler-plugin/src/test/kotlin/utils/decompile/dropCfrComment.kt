@@ -1,7 +1,16 @@
 package utils.decompile
 
-import utils.dropLine
-
 fun String.dropCfrComment(): String {
-    return if (this.trim().startsWith("/*")) dropLine(3) else this
+    val result = StringBuilder()
+    var inCommentBlock = false
+
+    for (line in this.lineSequence()) {
+        val trimmedLine = line.trim()
+        when {
+            trimmedLine.startsWith("/*") -> inCommentBlock = true
+            trimmedLine.endsWith("*/") -> inCommentBlock = false
+            !inCommentBlock -> result.appendLine(line)
+        }
+    }
+    return result.toString().dropLast(1) //drop last new line
 }

@@ -30,9 +30,10 @@ fun decompileClassAndTrim(file: File): String {
 
 @OptIn(ExperimentalCompilerApi::class)
 fun JvmCompilationResult.decompileClassAndTrim(fileName: String): String {
-    return decompileClass(
+    val decompileClass = decompileClass(
         this.generatedFiles.first { it.name == fileName }.absolutePath
-    ).dropCfrComment().dropKotlinMetadata().dropEmptyLines()
+    )
+    return decompileClass.dropCfrComment().dropKotlinMetadata().dropEmptyLines()
 }
 
 fun decompileClass(classFilePath: String, options: Map<String, String> = emptyMap()): String {

@@ -18,7 +18,7 @@ class AddCallLogTransformer(
 ) : IrElementTransformerVoidWithContext() {
 
     companion object {
-        const val CLASS_NAME = "CallLogger"
+        const val CLASS_NAME = "org.jetrbains.kotlin.CallLogger"
         const val STATIC_PROPERTY = "instance"
         const val START_METHOD = "start"
         const val END_METHOD = "end"
@@ -31,6 +31,9 @@ class AddCallLogTransformer(
     }
 
     private fun wrapDeclarationWithLogs(declaration: IrFunction) {
+
+        if(declaration.callableId.toString().contains(CLASS_NAME)) return
+
         val start = context.referenceCompanionPropertyFunction(CLASS_NAME, STATIC_PROPERTY, START_METHOD)
         val end = context.referenceCompanionPropertyFunction(CLASS_NAME, STATIC_PROPERTY, END_METHOD)
         val funId = declaration.callableId.toString()

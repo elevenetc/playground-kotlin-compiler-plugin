@@ -7,24 +7,38 @@
         <compositeConfiguration>
           <compositeBuild compositeDefinitionSource="SCRIPT">
             <builds>
-              <build path="$PROJECT_DIR$/buildSrc" name="buildSrc">
+              <build path="$PROJECT_DIR$/call-logger" name="call-logger">
                 <projects>
-                  <project path="$PROJECT_DIR$/buildSrc" />
+                  <project path="$PROJECT_DIR$/call-logger" />
+                </projects>
+              </build>
+              <build path="$PROJECT_DIR$/compiler-plugin" name="compiler-plugin">
+                <projects>
+                  <project path="$PROJECT_DIR$/compiler-plugin" />
+                </projects>
+              </build>
+              <build path="$PROJECT_DIR$/compiler-plugin-gradle" name="compiler-plugin-gradle">
+                <projects>
+                  <project path="$PROJECT_DIR$/compiler-plugin-gradle" />
+                </projects>
+              </build>
+              <build path="$PROJECT_DIR$/sample" name="sample">
+                <projects>
+                  <project path="$PROJECT_DIR$/sample" />
                 </projects>
               </build>
             </builds>
           </compositeBuild>
         </compositeConfiguration>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleHome" value="" />
+        <option name="gradleJvm" value="20" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/buildSrc" />
+            <option value="$PROJECT_DIR$/call-logger" />
             <option value="$PROJECT_DIR$/compiler-plugin" />
             <option value="$PROJECT_DIR$/compiler-plugin-gradle" />
-            <option value="$PROJECT_DIR$/utils" />
+            <option value="$PROJECT_DIR$/sample" />
           </set>
         </option>
       </GradleProjectSettings>
