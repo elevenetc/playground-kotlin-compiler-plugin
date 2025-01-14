@@ -19,6 +19,125 @@ class AddCallLogPluginTest {
     @JvmField
     var tempDir = TemporaryFolder()
 
+    @Test
+    fun `test - single return`() {
+        val source = """
+            class Foo {
+                fun bar(): Int {
+                    return 42
+                }
+            }
+        """.trimIndent()
+
+        val result = compile(
+            sourceInfo = buildSourceInfo(tempDir, source),
+            registrar = AddCallLogPluginRegistrar()
+        ).also { result -> result.assertSuccess() }
+
+        val expected = """
+            public final class Foo {
+                public final int bar() {
+                    Uuid uuid = CallLogger.Companion.getInstance().start("/Foo.bar");
+                    CallLogger.Companion.getInstance().end(uuid);
+                    return 42;
+                }
+            }
+        """.trimIndent()
+
+        assertEquals(expected, result.decompileClassAndTrim("Foo.class"))
+    }
+
+    @Test
+    fun `test - multiple returns`() {
+        val source = """
+            class Foo {
+                fun bar(value: Boolean): Int {
+                    if(value) {
+                        return 1
+                    } else {
+                        return 2    
+                    }
+                }
+            }
+        """.trimIndent()
+
+        val result = compile(
+            sourceInfo = buildSourceInfo(tempDir, source),
+            registrar = AddCallLogPluginRegistrar()
+        ).also { result -> result.assertSuccess() }
+
+        val expected = """
+            public final class Foo {
+                public final int bar(boolean value) {
+                    Uuid uuid = CallLogger.Companion.getInstance().start("/Foo.bar");
+                    if (value) {
+                        CallLogger.Companion.getInstance().end(uuid);
+                        return 1;
+                    }
+                    CallLogger.Companion.getInstance().end(uuid);
+                    return 2;
+                }
+            }
+        """.trimIndent()
+
+        assertEquals(expected, result.decompileClassAndTrim("Foo.class"))
+    }
+
+    @OptIn(ExperimentalUuidApi::class)
+    @Test
+    fun `test - lambda control flow`() {
+        val source = """
+            class Foo {
+                fun bar(f: () -> Unit) {
+                    f()
+                }
+            }
+
+
+            val foo = Foo().apply { 
+                this.bar {
+                    
+                }
+            }
+        """.trimIndent()
+
+        val result = compile(
+            sourceInfo = buildSourceInfo(tempDir, source),
+            registrar = AddCallLogPluginRegistrar()
+        ).also { result -> result.assertSuccess() }
+
+        val expected = """
+            public final class SourceKt {
+                @NotNull
+                private static final Foo foo;
+                @NotNull
+                public static final Foo getFoo() {
+                    Uuid uuid = CallLogger.Companion.getInstance().start("/<get-foo>");
+                    Foo foo = SourceKt.foo;
+                    CallLogger.Companion.getInstance().end(uuid);
+                    return foo;
+                }
+                private static final Unit foo${'$'}lambda${'$'}1${'$'}lambda${'$'}0() {
+                    Uuid uuid = CallLogger.Companion.getInstance().start("anonymous");
+                    Unit unit = Unit.INSTANCE;
+                    CallLogger.Companion.getInstance().end(uuid);
+                    return unit;
+                }
+                static {
+                    Foo foo;
+                    Foo ${'$'}this${'$'}foo_u24lambda_u241 = foo = new Foo();
+                    boolean bl = false;
+                    Uuid uuid = CallLogger.Companion.getInstance().start("anonymous");
+                    ${'$'}this${'$'}foo_u24lambda_u241.bar(SourceKt::foo${'$'}lambda${'$'}1${'$'}lambda${'$'}0);
+                    CallLogger.Companion.getInstance().end(uuid);
+                    SourceKt.foo = foo;
+                }
+            }
+        """.trimIndent()
+
+        assertEquals(expected, result.decompileClassAndTrim("SourceKt.class"))
+    }
+
     @OptIn(ExperimentalUuidApi::class)
     @Test
     fun `test - log calls injected in the beginning and the end of body`() {
@@ -38,12 +157,8 @@ class AddCallLogPluginTest {
             classpath = listOf(File(tempDir.root, "classes"))
         ).also { result -> result.assertSuccess() }
 
-        result.printCompiledClass("Foo.class")
-
         assertEquals(
             """
-            import kotlin.uuid.Uuid;
-            import org.jetrbains.kotlin.CallLogger;
             public final class Foo {
                 public final void bar() {
                     Uuid uuid = CallLogger.Companion.getInstance().start("/Foo.bar");
