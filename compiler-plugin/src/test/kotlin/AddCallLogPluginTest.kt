@@ -37,7 +37,7 @@ class AddCallLogPluginTest {
         val expected = """
             public final class Foo {
                 public final int bar() {
-                    Uuid uuid = CallLogger.Companion.getInstance().start("/Foo.bar");
+                    Uuid uuid = CallLogger.Companion.getInstance().start("Foo.bar");
                     CallLogger.Companion.getInstance().end(uuid);
                     return 42;
                 }
@@ -69,7 +69,7 @@ class AddCallLogPluginTest {
         val expected = """
             public final class Foo {
                 public final int bar(boolean value) {
-                    Uuid uuid = CallLogger.Companion.getInstance().start("/Foo.bar");
+                    Uuid uuid = CallLogger.Companion.getInstance().start("Foo.bar");
                     if (value) {
                         CallLogger.Companion.getInstance().end(uuid);
                         return 1;
@@ -112,13 +112,13 @@ class AddCallLogPluginTest {
                 private static final Foo foo;
                 @NotNull
                 public static final Foo getFoo() {
-                    Uuid uuid = CallLogger.Companion.getInstance().start("/<get-foo>");
+                    Uuid uuid = CallLogger.Companion.getInstance().start("<get-foo>");
                     Foo foo = SourceKt.foo;
                     CallLogger.Companion.getInstance().end(uuid);
                     return foo;
                 }
                 private static final Unit foo${'$'}lambda${'$'}1${'$'}lambda${'$'}0() {
-                    Uuid uuid = CallLogger.Companion.getInstance().start("anonymous");
+                    Uuid uuid = CallLogger.Companion.getInstance().start("foo.<anonymous>.<anonymous>");
                     Unit unit = Unit.INSTANCE;
                     CallLogger.Companion.getInstance().end(uuid);
                     return unit;
@@ -127,7 +127,7 @@ class AddCallLogPluginTest {
                     Foo foo;
                     Foo ${'$'}this${'$'}foo_u24lambda_u241 = foo = new Foo();
                     boolean bl = false;
-                    Uuid uuid = CallLogger.Companion.getInstance().start("anonymous");
+                    Uuid uuid = CallLogger.Companion.getInstance().start("foo.<anonymous>");
                     ${'$'}this${'$'}foo_u24lambda_u241.bar(SourceKt::foo${'$'}lambda${'$'}1${'$'}lambda${'$'}0);
                     CallLogger.Companion.getInstance().end(uuid);
                     SourceKt.foo = foo;
@@ -161,7 +161,7 @@ class AddCallLogPluginTest {
             """
             public final class Foo {
                 public final void bar() {
-                    Uuid uuid = CallLogger.Companion.getInstance().start("/Foo.bar");
+                    Uuid uuid = CallLogger.Companion.getInstance().start("Foo.bar");
                     int mid = 42;
                     Thread.sleep(1L);
                     CallLogger.Companion.getInstance().end(uuid);
@@ -185,7 +185,7 @@ class AddCallLogPluginTest {
             val secondCall = this[keys.second()] ?: error("Second call " + keys.first() + " does not exist")
 
             assertEquals(firstCall.fqn, secondCall.fqn)
-            assertEquals("/Foo.bar", secondCall.fqn)
+            assertEquals("Foo.bar", secondCall.fqn)
             assertTrue(firstCall.start <= firstCall.end)
             assertTrue(secondCall.start <= secondCall.end)
             assertTrue(firstCall.start <= secondCall.start)

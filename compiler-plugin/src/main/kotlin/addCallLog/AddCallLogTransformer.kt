@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.impl.IrTryImpl
-import org.jetbrains.kotlin.ir.util.callableId
+import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.name.Name
 import utils.irCompanionPropertyCall
@@ -101,7 +101,10 @@ private class ReturnTransformer(
     }
 }
 
+/**
+ * [IrFunction.callableId] might throw exception in set of cases
+ * So [fqNameForIrSerialization] is used instead
+ */
 private fun IrFunction.safeFqn(): String {
-    if (name.toString() == "<anonymous>") return "anonymous"
-    return callableId.toString()
+    return this.fqNameForIrSerialization.toString()
 }
