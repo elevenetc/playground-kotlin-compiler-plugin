@@ -7,24 +7,38 @@ import kotlin.uuid.Uuid
 class CallLogger {
 
     val calls = mutableMapOf<Uuid, Call>()
+    var currentCall: Call? = null
 
     fun start(callFqn: String): Uuid {
         val call = Call(Uuid.random(), callFqn, System.currentTimeMillis(), -1)
         calls[call.id] = call
+
+        if (currentCall?.ended == false) {
+            currentCall?.children?.add(call)
+        }
+        call.parent = currentCall
+        currentCall = call
         return call.id
     }
 
     fun end(id: Uuid) {
-        val call = calls[id] ?: error("Call $id does not exist")
-        calls[id] = call.copy(end = System.currentTimeMillis())
+        calls[id] ?: error("Call $id does not exist")
+        calls[id]?.end = System.currentTimeMillis()
+        currentCall = currentCall?.parent
     }
 
     data class Call(
         val id: Uuid,
         val fqn: String,
         val start: Long,
-        val end: Long
-    )
+        var end: Long
+    ) {
+        var parent: Call? = null
+        val children = mutableListOf<Call>()
+    }
+
+    val Call.ended: Boolean
+        get() = this.end != -1L
 
     companion object {
         @JvmStatic

@@ -13,3 +13,6 @@ repositories {
 kotlin {
     jvmToolchain(20)
 }
+dependencies {
+    testImplementation(kotlin("test"))
+}

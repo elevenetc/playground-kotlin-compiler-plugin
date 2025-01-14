@@ -9,6 +9,7 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlin:call-logger:0.0.1")
+    testImplementation(kotlin("test"))
 }
 
 group = "org.jetbrains.kotlin"
