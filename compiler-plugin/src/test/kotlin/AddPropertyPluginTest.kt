@@ -41,7 +41,6 @@ class AddPropertyPluginTest {
 
         @Language("java")
         val expected = """
-            import org.jetbrains.annotations.NotNull;
             public final class Foo {
                 @NotNull
                 public $propertyType $propertyName = "$propertyValue";
@@ -61,9 +60,7 @@ class AddPropertyPluginTest {
         val propertyFqnType = "kotlin.$propertyType"
 
         val source = """
-          class Foo {
-            
-          }
+                    class Foo           
         """.trimIndent()
 
         val result = compile(

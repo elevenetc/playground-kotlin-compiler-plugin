@@ -37,8 +37,6 @@ class AddMethodArgumentPluginTest {
         val argumentType = "String"
 
         val expected = """
-            import kotlin.jvm.internal.Intrinsics;
-            import org.jetbrains.annotations.NotNull;
             public final class Foo {
                 public final void bar(@NotNull String stringArg) {
                     Intrinsics.checkNotNullParameter(stringArg, "stringArg");

@@ -25,7 +25,7 @@ fun JvmCompilationResult.decompileClassesAndTrim(): Map<String, String> {
 }
 
 fun decompileClassAndTrim(file: File): String {
-    return decompileClass(file.absolutePath).dropCfrComment().dropKotlinMetadata().dropEmptyLines()
+    return decompileClass(file.absolutePath).trimCode()
 }
 
 @OptIn(ExperimentalCompilerApi::class)
@@ -33,7 +33,11 @@ fun JvmCompilationResult.decompileClassAndTrim(fileName: String): String {
     val decompileClass = decompileClass(
         this.generatedFiles.first { it.name == fileName }.absolutePath
     )
-    return decompileClass.dropCfrComment().dropKotlinMetadata().dropEmptyLines()
+    return decompileClass.trimCode()
+}
+
+fun String.trimCode(): String {
+    return dropImports().dropCfrComment().dropKotlinMetadata().dropEmptyLines()
 }
 
 fun decompileClass(classFilePath: String, options: Map<String, String> = emptyMap()): String {
