@@ -3,7 +3,8 @@ import org.jetrbains.kotlin.CallLogger
 fun main() {
     val foo = Foo()
     foo.bar()
-    println(CallLogger.instance)
+    val logger = CallLogger.instance
+    println(logger)
 }
 
 class Foo {

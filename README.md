@@ -13,3 +13,8 @@ This repository contains basic examples demonstrating the use of Kotlin compiler
 ## Test
 
 * Run `./gradlew :compiler-plugin:check` to run all checks, including tests.
+
+## Local development
+
+* Build `./gradlew :compiler-plugin-gradle:build :call-logger:build`
+* Publish `./gradlew :compiler-plugin-gradle:publish :call-logger:publish`

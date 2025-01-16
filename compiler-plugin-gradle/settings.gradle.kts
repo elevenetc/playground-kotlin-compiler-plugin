@@ -1,4 +1,4 @@
-rootProject.name = "compiler-plugin-gradle"
+rootProject.name = "playground-compiler-plugin"
 
 dependencyResolutionManagement {
     versionCatalogs {
@@ -7,3 +7,10 @@ dependencyResolutionManagement {
         }
     }
 }
+
+//includeBuild("../compiler-plugin") {
+//    dependencySubstitution {
+//        substitute(module("org.jetbrains.kotlin:compiler-plugin"))
+//            .using(project(":compiler-plugin"))
+//    }
+//}

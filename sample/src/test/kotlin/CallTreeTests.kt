@@ -26,4 +26,26 @@ class CallTreeTests {
         assertEquals("CallTreeTests.test - lambda argument.<anonymous>", currentCall.children[0].children[0].fqn)
     }
 
+    @Test
+    fun `test - nested call`() {
+
+        fun c() {
+
+        }
+
+        fun b() {
+            c()
+        }
+
+        fun a() {
+            b()
+        }
+
+        a()
+
+        println(CallLogger.instance)
+
+
+    }
+
 }

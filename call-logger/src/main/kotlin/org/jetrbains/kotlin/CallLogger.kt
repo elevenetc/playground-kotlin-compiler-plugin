@@ -8,6 +8,7 @@ class CallLogger {
 
     val calls = mutableMapOf<Uuid, Call>()
     var currentCall: Call? = null
+    val history = mutableListOf<Call>()
 
     fun start(callFqn: String): Uuid {
         val call = Call(Uuid.random(), callFqn, System.currentTimeMillis(), -1)
@@ -17,14 +18,19 @@ class CallLogger {
             currentCall?.children?.add(call)
         }
         call.parent = currentCall
-        currentCall = call
+        updateCurrent(call)
         return call.id
     }
 
     fun end(id: Uuid) {
         calls[id] ?: error("Call $id does not exist")
         calls[id]?.end = System.currentTimeMillis()
-        currentCall = currentCall?.parent
+        updateCurrent(currentCall?.parent)
+    }
+
+    private fun updateCurrent(call: Call?) {
+        if (call != null) history.add(call)
+        currentCall = call
     }
 
     data class Call(

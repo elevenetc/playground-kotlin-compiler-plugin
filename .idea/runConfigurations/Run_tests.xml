@@ -10,7 +10,7 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value=":compiler-plugin:check" />
+          <option value=":compiler-plugin-gradle:check" />
         </list>
       </option>
       <option name="vmOptions" />

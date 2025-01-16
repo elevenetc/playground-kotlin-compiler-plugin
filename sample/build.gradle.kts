@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm") version "2.0.21"
-    id("compiler-plugin").version("0.0.1")
+    id("playground.compiler.plugin").version("0.0.1")
 }
 
 repositories {
@@ -17,4 +17,8 @@ version = "unspecified"
 
 kotlin {
     jvmToolchain(20)
+}
+
+playgroundCompilerPluginSettings {
+    enabled?.set(true)
 }
