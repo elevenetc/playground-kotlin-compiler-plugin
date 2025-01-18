@@ -1,4 +1,4 @@
-import org.jetrbains.kotlin.CallLogger
+import org.jetbrains.kotlin.CallLogger
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

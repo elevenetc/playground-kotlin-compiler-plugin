@@ -25,7 +25,7 @@ class AddCallLogTransformer(
 ) : IrElementTransformerVoidWithContext() {
 
     companion object {
-        const val CLASS_NAME = "org.jetrbains.kotlin.CallLogger"
+        const val CLASS_NAME = "org.jetbrains.kotlin.CallLogger"
         const val STATIC_PROPERTY = "instance"
         const val START_METHOD = "start"
         const val END_METHOD = "end"

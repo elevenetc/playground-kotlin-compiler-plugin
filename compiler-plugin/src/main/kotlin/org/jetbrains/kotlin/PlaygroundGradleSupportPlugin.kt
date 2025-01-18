@@ -28,7 +28,7 @@ class PlaygroundGradleSupportPlugin : KotlinCompilerPluginSupportPlugin {
     override fun getPluginArtifact(): SubpluginArtifact {
         return SubpluginArtifact(
             groupId = "org.jetbrains.kotlin",
-            artifactId = "playground.compiler.plugin",
+            artifactId = "compiler-plugin",
             version = "0.0.1",
         )
     }

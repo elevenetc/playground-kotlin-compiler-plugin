@@ -1,6 +1,7 @@
 plugins {
-    kotlin("jvm") version "2.0.21"
-    id("playground.compiler.plugin").version("0.0.1")
+    kotlin("jvm") version libs.versions.kotlin
+    id("application")
+    id("compiler-plugin").version("0.0.1")
 }
 
 repositories {
@@ -8,7 +9,8 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:call-logger:0.0.1")
+    implementation("org.jetbrains.kotlin:compiler-dependencies:0.0.1")
+    testImplementation("org.jetbrains.kotlin:compiler-dependencies:0.0.1")
     testImplementation(kotlin("test"))
 }
 
@@ -20,5 +22,5 @@ kotlin {
 }
 
 playgroundCompilerPluginSettings {
-    enabled?.set(true)
+    enabled.set(/* value = */ true)
 }

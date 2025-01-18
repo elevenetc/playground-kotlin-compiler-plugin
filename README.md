@@ -12,9 +12,34 @@ This repository contains basic examples demonstrating the use of Kotlin compiler
 
 ## Test
 
-* Run `./gradlew :compiler-plugin:check` to run all checks, including tests.
+* Run `./gradlew runChecks` to run all checks, including tests.
 
-## Local development
+## Development
 
-* Build `./gradlew :compiler-plugin-gradle:build :call-logger:build`
-* Publish `./gradlew :compiler-plugin-gradle:publish :call-logger:publish`
+### Use sample project
+
+See [sample](sample)
+
+### Use with external project
+
+1. Build and publish plugin to local maven repository `./gradlew buildAndPublish`
+2. Use it
+
+```kotlin
+//settings.gradle.kts
+pluginManagement {
+  repositories {
+    mavenLocal()
+  }
+}
+//build.gradle.kts
+plugins {
+  id("compiler-plugin") version "0.0.1"
+}
+repositories {
+  mavenLocal()
+}
+dependencies {
+  implementation("org.jetbrains.kotlin:compiler-dependencies:0.0.1")
+}
+```

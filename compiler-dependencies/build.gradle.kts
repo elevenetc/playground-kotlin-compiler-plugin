@@ -4,27 +4,23 @@ plugins {
     id("maven-publish")
 }
 
-group = "org.jetbrains.kotlin"
-version = "0.0.1"
+val libraryGroupId = "org.jetbrains.kotlin"
+val libraryId = "compiler-dependencies"
+val libraryVersion = "0.0.1"
+version = libraryVersion
+group = libraryGroupId
 
 repositories {
     mavenCentral()
-}
-
-kotlin {
-    jvmToolchain(20)
-}
-dependencies {
-    testImplementation(kotlin("test"))
 }
 
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
-            groupId = "org.jetbrains.kotlin"
-            artifactId = "playground-compiler-plugin-logger"
-            version = "0.0.1"
+            artifactId = libraryId
+            groupId = libraryGroupId
+            version = libraryVersion
         }
     }
 
@@ -33,4 +29,8 @@ publishing {
             url = uri("${System.getProperty("user.home")}/.m2/repository")
         }
     }
+}
+
+kotlin {
+    jvmToolchain(20)
 }

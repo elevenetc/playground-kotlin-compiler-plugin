@@ -1,37 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="GradleMigrationSettings" migrationVersion="1" />
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <compositeConfiguration>
           <compositeBuild compositeDefinitionSource="SCRIPT">
             <builds>
-              <build path="$PROJECT_DIR$/call-logger" name="call-logger">
+              <build path="$PROJECT_DIR$/compiler-dependencies" name="compiler-dependencies">
                 <projects>
-                  <project path="$PROJECT_DIR$/call-logger" />
+                  <project path="$PROJECT_DIR$/compiler-dependencies" />
                 </projects>
               </build>
-              <build path="$PROJECT_DIR$/compiler-plugin-gradle" name="playground-compiler-plugin">
+              <build path="$PROJECT_DIR$/compiler-plugin" name="compiler-plugin">
                 <projects>
-                  <project path="$PROJECT_DIR$/compiler-plugin-gradle" />
-                </projects>
-              </build>
-              <build path="$PROJECT_DIR$/sample" name="sample">
-                <projects>
-                  <project path="$PROJECT_DIR$/sample" />
+                  <project path="$PROJECT_DIR$/compiler-plugin" />
                 </projects>
               </build>
             </builds>
           </compositeBuild>
         </compositeConfiguration>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleJvm" value="20" />
+        <option name="gradleJvm" value="#JAVA_HOME" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/call-logger" />
-            <option value="$PROJECT_DIR$/compiler-plugin-gradle" />
+            <option value="$PROJECT_DIR$/compiler-dependencies" />
+            <option value="$PROJECT_DIR$/compiler-plugin" />
             <option value="$PROJECT_DIR$/sample" />
           </set>
         </option>

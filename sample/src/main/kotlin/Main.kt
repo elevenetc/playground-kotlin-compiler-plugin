@@ -1,10 +1,12 @@
-import org.jetrbains.kotlin.CallLogger
+import org.jetbrains.kotlin.CallLogger
+import kotlin.uuid.ExperimentalUuidApi
 
+
+@OptIn(ExperimentalUuidApi::class)
 fun main() {
     val foo = Foo()
     foo.bar()
-    val logger = CallLogger.instance
-    println(logger)
+    println("hello world: ${CallLogger.instance.calls.size}")
 }
 
 class Foo {

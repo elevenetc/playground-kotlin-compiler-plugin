@@ -1,4 +1,4 @@
-package org.jetrbains.kotlin
+package org.jetbrains.kotlin
 
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid

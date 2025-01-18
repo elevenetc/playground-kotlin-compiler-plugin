@@ -1,9 +1,9 @@
 plugins {
-    kotlin("jvm") version "2.0.21"
+    kotlin("jvm") version libs.versions.kotlin
     id("java-gradle-plugin")
     alias(libs.plugins.buildConfig)
     id("maven-publish")
-    kotlin("kapt") version "2.0.21"
+    kotlin("kapt") version libs.versions.kotlin
 }
 
 repositories {
@@ -12,12 +12,13 @@ repositories {
 
 dependencies {
     compileOnly(libs.kotlin.gradlePlugin.api)
-
     compileOnly(libs.kotlin.compilerEmbeddable)
     compileOnly(libs.kotlin.stdlib)
+    compileOnly("com.google.auto.service:auto-service-annotations:1.1.1")
 
     kapt("com.google.auto.service:auto-service:1.1.1")
-    compileOnly("com.google.auto.service:auto-service-annotations:1.1.1")
+
+    implementation("org.jetbrains.kotlin:compiler-dependencies:0.0.1")
 
     testImplementation(kotlin("test"))
     testImplementation(libs.kotlin.stdlib)
@@ -28,7 +29,6 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.compileTesting)
     testImplementation(libs.cfr)
-    testImplementation("org.jetbrains.kotlin:call-logger:0.0.1")
 }
 
 //buildConfig {
@@ -40,6 +40,12 @@ dependencies {
 //    buildConfigField("String", "KOTLIN_PLUGIN_VERSION", "\"${project.version}\"")
 //}
 
+val pluginGroupId = "org.jetbrains.kotlin"
+val pluginId = "compiler-plugin"
+val pluginVersion = "0.0.1"
+version = pluginVersion
+group = pluginGroupId
+
 kotlin {
     jvmToolchain(20)
 }
@@ -47,9 +53,9 @@ kotlin {
 gradlePlugin {
     plugins {
         create("playgroundCompilerPlugin") {
-            id = "playground.compiler.plugin"
-            group = "org.jetbrains.kotlin"
-            version = "0.0.1"
+            id = pluginId
+            group = pluginGroupId
+            version = pluginVersion
             implementationClass = "org.jetbrains.kotlin.PlaygroundGradleSupportPlugin"
         }
     }
@@ -59,11 +65,9 @@ publishing {
     publications {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
-            artifactId = "playground.compiler.plugin"
-            groupId = "org.jetbrains.kotlin"
-            version = "0.0.1"
-
-            //artifact(project(":compiler-plugin").tasks.getByName("jar"))
+            artifactId = pluginId
+            groupId = pluginGroupId
+            version = pluginVersion
         }
     }
 

@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Run tests" type="GradleRunConfiguration" factoryName="Gradle">
+  <configuration default="false" name="Run checks" type="GradleRunConfiguration" factoryName="Gradle">
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -10,15 +10,15 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value=":compiler-plugin-gradle:check" />
+          <option value="runChecks" />
         </list>
       </option>
       <option name="vmOptions" />
     </ExternalSystemSettings>
-    <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
     <DebugAllEnabled>false</DebugAllEnabled>
-    <RunAsTest>true</RunAsTest>
+    <RunAsTest>false</RunAsTest>
     <method v="2" />
   </configuration>
 </component>

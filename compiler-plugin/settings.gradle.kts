@@ -1,4 +1,4 @@
-rootProject.name = "sample"
+rootProject.name = "compiler-plugin"
 
 dependencyResolutionManagement {
     versionCatalogs {
@@ -7,3 +7,4 @@ dependencyResolutionManagement {
         }
     }
 }
+

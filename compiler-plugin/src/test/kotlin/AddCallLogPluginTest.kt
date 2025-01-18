@@ -1,6 +1,6 @@
+import org.jetbrains.kotlin.CallLogger
 import org.jetbrains.kotlin.addCallLog.AddCallLogPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
-import org.jetrbains.kotlin.CallLogger
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
