@@ -1,5 +1,6 @@
 plugins {
-    kotlin("jvm") version "2.0.21"
+    kotlin("jvm") version libs.versions.kotlin
+    kotlin("plugin.serialization") version libs.versions.kotlin
     id("java-library")
     id("maven-publish")
 }
@@ -12,6 +13,10 @@ group = libraryGroupId
 
 repositories {
     mavenCentral()
+}
+
+dependencies {
+    implementation(libs.kotlinxSerialization)
 }
 
 publishing {

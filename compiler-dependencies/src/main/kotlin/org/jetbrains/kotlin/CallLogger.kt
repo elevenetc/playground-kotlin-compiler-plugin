@@ -26,6 +26,7 @@ class CallLogger {
         calls[id] ?: error("Call $id does not exist")
         calls[id]?.end = System.currentTimeMillis()
         updateCurrent(currentCall?.parent)
+        LoggerDumper.instance.dump(this)
     }
 
     private fun updateCurrent(call: Call?) {
