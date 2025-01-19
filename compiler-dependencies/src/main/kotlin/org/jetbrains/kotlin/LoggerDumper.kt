@@ -18,6 +18,11 @@ class LoggerDumper {
         storeDump(createDump(logger))
     }
 
+    fun dumpToString(logger: CallLogger): String {
+        val dump = createDump(logger)
+        return json.encodeToString(dump)
+    }
+
     private fun storeDump(dump: DumpLog) {
         val dir = File(filePath).also { if (!it.exists()) it.mkdirs() }
         val file = File(dir, fileName)
@@ -27,11 +32,9 @@ class LoggerDumper {
     private fun createDump(logger: CallLogger): DumpLog {
 
         val root = logger.history.first()
-
-
         val log = DumpLog(
             System.currentTimeMillis(),
-            logger.history.map { DumpLog.HistoryItem(it.id.toString(), it.start, it.end, it.fqn) },
+            logger.history.map { DumpLog.HistoryItem(it.id.toString(), it.start, it.end, it.threadName, it.fqn) },
             root.toTreeNode()
         )
         return log
@@ -47,7 +50,7 @@ private fun CallLogger.Call.toTreeNode(): DumpLog.TreeNode {
     val children = this.children.map {
         it.toTreeNode()
     }
-    return DumpLog.TreeNode(this.id.toString(), this.start, this.end, this.fqn, children)
+    return DumpLog.TreeNode(this.id.toString(), this.start, this.end, this.fqn, this.threadName, children)
 }
 
 private const val filePath = "build/generated/logger-dump"
@@ -60,11 +63,16 @@ data class DumpLog(
     val treeRoot: TreeNode
 ) {
     @Serializable
-    data class HistoryItem(val id: String, val start: Long, val end: Long, val fqn: String)
+    data class HistoryItem(
+        val id: String, val start: Long, val end: Long,
+        val threadName: String,
+        val fqn: String
+    )
 
     @Serializable
     data class TreeNode(
         val id: String, val start: Long, val end: Long, val fqn: String,
+        val threadName: String,
         val children: List<TreeNode>
     )
 }
