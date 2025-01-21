@@ -41,8 +41,10 @@ class CallLogger {
     }
 
     private fun updateCurrent(call: Call?) {
-        if (call != null) history.add(call)
-        currentCall = call
+        if (call != null) {
+            history.add(call)
+            currentCall = call
+        }
     }
 
     data class Call(
