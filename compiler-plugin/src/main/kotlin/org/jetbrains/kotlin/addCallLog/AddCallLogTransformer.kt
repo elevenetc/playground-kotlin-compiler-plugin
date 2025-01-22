@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.utils.referenceCompanionPropertyFunction
 import org.jetbrains.kotlin.utils.withDeclarationIrBuilder
 
 class AddCallLogTransformer(
+    private val excludedFqns: List<String>,
     private val context: IrPluginContext
 ) : IrElementTransformerVoidWithContext() {
 
@@ -39,6 +40,7 @@ class AddCallLogTransformer(
 
     private fun wrapDeclarationWithLogs(declaration: IrFunction) {
         val fqn = declaration.safeFqn()
+        if (excludedFqns.contains(fqn)) return
         if (fqn.contains(CLASS_NAME)) return
 
         val typeUnit = context.irBuiltIns.unitType

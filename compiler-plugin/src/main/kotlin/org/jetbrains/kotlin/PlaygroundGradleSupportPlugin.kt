@@ -2,6 +2,7 @@ package org.jetbrains.kotlin
 
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.addCallLog.AddCallLogCommandLineProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
@@ -18,8 +19,19 @@ class PlaygroundGradleSupportPlugin : KotlinCompilerPluginSupportPlugin {
 
     override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> {
         val project = kotlinCompilation.target.project
+        val extension = project.extensions.getByType(PlaygroundCompilerPluginSettingsExtension::class.java)
+
+        val enabled = extension.enabled.get()
+        val excludedFqns = extension.excludedFqns.get()
+
         return project.provider {
-            emptyList()
+            listOf(
+                SubpluginOption(key = AddCallLogCommandLineProcessor.ENABLE.value, value = enabled.toString()),
+                SubpluginOption(
+                    key = AddCallLogCommandLineProcessor.EXCLUDED_FQNS.value,
+                    value = excludedFqns.joinToString(",")
+                ),
+            )
         }
     }
 

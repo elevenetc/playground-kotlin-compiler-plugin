@@ -1,6 +1,8 @@
 import org.jetbrains.kotlin.CallLogger
+import org.jetbrains.kotlin.addCallLog.AddCallLogCommandLineProcessor
 import org.jetbrains.kotlin.addCallLog.AddCallLogPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -18,6 +20,49 @@ class AddCallLogPluginTest {
     @Rule
     @JvmField
     var tempDir = TemporaryFolder()
+
+    @Before
+    fun before() {
+        CallLogger.instance.enableBump = false
+    }
+
+    @Test
+    fun `test - exclude fqn`() {
+        val source = """
+            class Foo {
+                fun bar0() {
+                    
+                }
+                fun bar1() {
+                    
+                }
+            }
+        """.trimIndent()
+
+        val result = compile(
+            sourceInfo = buildSourceInfo(tempDir, source),
+            registrar = AddCallLogPluginRegistrar(),
+            processor = AddCallLogCommandLineProcessor(),
+            options = {
+                listOf(
+                    option(AddCallLogCommandLineProcessor.EXCLUDED_FQNS.option, listOf("Foo.bar0"))
+                )
+            }
+        ).also { result -> result.assertSuccess() }
+
+        val expected = """
+            public final class Foo {
+                public final void bar0() {
+                }
+                public final void bar1() {
+                    Uuid uuid = CallLogger.Companion.getInstance().start("Foo.bar1");
+                    CallLogger.Companion.getInstance().end(uuid);
+                }
+            }
+        """.trimIndent()
+
+        assertEquals(expected, result.decompileClassAndTrim("Foo.class"))
+    }
 
     @Test
     fun `test - single return`() {
