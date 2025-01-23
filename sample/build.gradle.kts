@@ -22,5 +22,5 @@ kotlin {
 }
 
 playgroundCompilerPluginSettings {
-    enabled.set(/* value = */ true)
+    enabled = true
 }
