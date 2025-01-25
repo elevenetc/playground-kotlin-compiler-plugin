@@ -31,7 +31,8 @@ fun decompileClassAndTrim(file: File): String {
 @OptIn(ExperimentalCompilerApi::class)
 fun JvmCompilationResult.decompileClassAndTrim(fileName: String): String {
     val decompileClass = decompileClass(
-        this.generatedFiles.first { it.name == fileName }.absolutePath
+        this.generatedFiles.firstOrNull { it.name == fileName }?.absolutePath
+            ?: error("Decompiled file `$fileName` not found")
     )
     return decompileClass.trimCode()
 }
