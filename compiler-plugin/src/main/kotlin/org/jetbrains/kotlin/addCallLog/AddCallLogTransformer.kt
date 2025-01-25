@@ -21,9 +21,12 @@ import org.jetbrains.kotlin.utils.referenceCompanionPropertyFunction
 import org.jetbrains.kotlin.utils.withDeclarationIrBuilder
 
 class AddCallLogTransformer(
-    private val excludedFqns: List<String>,
+    excludedFqns: List<String>,
     private val context: IrPluginContext
 ) : IrElementTransformerVoidWithContext() {
+    private val excludedPatterns: List<Regex> = excludedFqns.map { pattern ->
+        pattern.replace(".", "\\.").replace("*", ".*").toRegex()
+    }
 
     companion object {
         const val CLASS_NAME = "org.jetbrains.kotlin.CallLogger"
@@ -40,7 +43,7 @@ class AddCallLogTransformer(
 
     private fun wrapDeclarationWithLogs(declaration: IrFunction) {
         val fqn = declaration.safeFqn()
-        if (excludedFqns.contains(fqn)) return
+        if (excludedPatterns.any { it.matches(fqn) }) return
         if (fqn.contains(CLASS_NAME)) return
 
         val typeUnit = context.irBuiltIns.unitType

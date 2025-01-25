@@ -31,10 +31,10 @@ class AddCallLogPluginTest {
         val source = """
             class Foo {
                 fun bar0() {
-                    
+
                 }
                 fun bar1() {
-                    
+
                 }
             }
         """.trimIndent()
@@ -62,6 +62,106 @@ class AddCallLogPluginTest {
         """.trimIndent()
 
         assertEquals(expected, result.decompileClassAndTrim("Foo.class"))
+    }
+
+    @Test
+    fun `test - exclude fqn with wildcard`() {
+        val source = """
+            class Foo {
+                fun bar0() {
+
+                }
+                fun bar1() {
+
+                }
+                fun other() {
+
+                }
+            }
+        """.trimIndent()
+
+        val result = compile(
+            sourceInfo = buildSourceInfo(tempDir, source),
+            registrar = AddCallLogPluginRegistrar(),
+            processor = AddCallLogCommandLineProcessor(),
+            options = {
+                listOf(
+                    option(AddCallLogCommandLineProcessor.EXCLUDED_FQNS.option, listOf("Foo.bar*"))
+                )
+            }
+        ).also { result -> result.assertSuccess() }
+
+        val expected = """
+            public final class Foo {
+                public final void bar0() {
+                }
+                public final void bar1() {
+                }
+                public final void other() {
+                    Uuid uuid = CallLogger.Companion.getInstance().start("Foo.other");
+                    CallLogger.Companion.getInstance().end(uuid);
+                }
+            }
+        """.trimIndent()
+
+        assertEquals(expected, result.decompileClassAndTrim("Foo.class"))
+    }
+
+    @Test
+    fun `test - exclude multiple patterns`() {
+        val source = """
+            class Foo {
+                fun test1() {
+
+                }
+                fun test2() {
+
+                }
+                fun other() {
+
+                }
+            }
+            class Bar {
+                fun test() {
+
+                }
+            }
+        """.trimIndent()
+
+        val result = compile(
+            sourceInfo = buildSourceInfo(tempDir, source),
+            registrar = AddCallLogPluginRegistrar(),
+            processor = AddCallLogCommandLineProcessor(),
+            options = {
+                listOf(
+                    option(AddCallLogCommandLineProcessor.EXCLUDED_FQNS.option, listOf("Foo.test*", "Bar.*"))
+                )
+            }
+        ).also { result -> result.assertSuccess() }
+
+        val expected = """
+            public final class Foo {
+                public final void test1() {
+                }
+                public final void test2() {
+                }
+                public final void other() {
+                    Uuid uuid = CallLogger.Companion.getInstance().start("Foo.other");
+                    CallLogger.Companion.getInstance().end(uuid);
+                }
+            }
+        """.trimIndent()
+
+        assertEquals(expected, result.decompileClassAndTrim("Foo.class"))
+
+        val expectedBar = """
+            public final class Bar {
+                public final void test() {
+                }
+            }
+        """.trimIndent()
+
+        assertEquals(expectedBar, result.decompileClassAndTrim("Bar.class"))
     }
 
     @Test
@@ -141,7 +241,7 @@ class AddCallLogPluginTest {
 
             val foo = Foo().apply { 
                 this.bar {
-                    
+
                 }
             }
         """.trimIndent()
