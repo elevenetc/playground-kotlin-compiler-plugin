@@ -14,6 +14,8 @@ This repository contains basic examples demonstrating the use of Kotlin compiler
   method: [implementation](compiler-plugin/src/main/kotlin/org/jetbrains/kotlin/addDependencyCallToMethod), [tests](compiler-plugin/src/test/kotlin/AddDependencyCallToMethodPluginTest.kt)
 - Add call
   logger: [implementation](compiler-plugin/src/main/kotlin/org/jetbrains/kotlin/addCallLog), [tests](compiler-plugin/src/test/kotlin/AddCallLogPluginTest.kt)
+- Override
+  method: [implementation](compiler-plugin/src/main/kotlin/org/jetbrains/kotlin/overrideMethod), [tests](compiler-plugin/src/test/kotlin/OverrideMethodPluginTest.kt)
 
 ## Test
 
