@@ -50,3 +50,14 @@ dependencies {
   implementation("org.jetbrains.kotlin:compiler-dependencies:0.0.1")
 }
 ```
+
+### Debug gradle plugin
+
+1. Start `build` task in debug mode
+
+```shell
+cd project-with-applied-plugin
+./gradlew build -Dorg.gradle.debug=true --no-daemon
+```
+
+2. Launch `Debug gradle plugin` configuration in intellij
