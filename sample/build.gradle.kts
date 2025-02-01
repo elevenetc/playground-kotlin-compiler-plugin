@@ -24,23 +24,6 @@ kotlin {
 playgroundCompilerPluginSettings {
     enabled = true
     excludedFqns = listOf(
-
-        //Ok case
-        //"main",
-
-        //Ok case
-        //"*bar*",
-
-        //Fail case
-        //"bar",
-        //"main",
-
-        //Fail case
-        //"*Foo*",
-        //"main",
-
-        //Fail case
-        //"*anonymous*",
-        //"a",
+        "*bar*"
     )
 }

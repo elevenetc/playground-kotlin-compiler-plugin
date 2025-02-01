@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.utils.referenceCompanionPropertyFunction
 import org.jetbrains.kotlin.utils.withDeclarationIrBuilder
 
 class AddCallLogTransformer(
-    excludedFqns: List<String>,
+    private val excludedFqns: List<String>,
     private val context: IrPluginContext
 ) : IrElementTransformerVoidWithContext() {
     private val excludedPatterns: List<Regex> = excludedFqns.map { pattern ->

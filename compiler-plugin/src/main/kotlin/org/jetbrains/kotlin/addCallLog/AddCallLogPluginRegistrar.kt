@@ -14,10 +14,11 @@ class AddCallLogPluginRegistrar : CompilerPluginRegistrar() {
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
 
-        val excludedFqns = configuration.get(AddCallLogCommandLineProcessor.EXCLUDED_FQNS.key) ?: emptyList()
+        val rawFqns = configuration.get(AddCallLogCommandLineProcessor.EXCLUDED_FQN.key) ?: ""
+        val fqns = rawFqns.split("|")
 
         IrGenerationExtension.registerExtension(
-            AddCallLogPluginExtension(excludedFqns)
+            AddCallLogPluginExtension(fqns)
         )
     }
 }

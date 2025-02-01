@@ -45,7 +45,7 @@ class AddCallLogPluginTest {
             processor = AddCallLogCommandLineProcessor(),
             options = {
                 listOf(
-                    option(AddCallLogCommandLineProcessor.EXCLUDED_FQNS.option, listOf("Foo.bar0"))
+                    option(AddCallLogCommandLineProcessor.EXCLUDED_FQN.option, "Foo.bar0")
                 )
             }
         ).also { result -> result.assertSuccess() }
@@ -86,7 +86,7 @@ class AddCallLogPluginTest {
             processor = AddCallLogCommandLineProcessor(),
             options = {
                 listOf(
-                    option(AddCallLogCommandLineProcessor.EXCLUDED_FQNS.option, listOf("Foo.bar*"))
+                    option(AddCallLogCommandLineProcessor.EXCLUDED_FQN.option, "Foo.bar*")
                 )
             }
         ).also { result -> result.assertSuccess() }
@@ -134,7 +134,8 @@ class AddCallLogPluginTest {
             processor = AddCallLogCommandLineProcessor(),
             options = {
                 listOf(
-                    option(AddCallLogCommandLineProcessor.EXCLUDED_FQNS.option, listOf("Foo.test*", "Bar.*"))
+                    option(AddCallLogCommandLineProcessor.EXCLUDED_FQN.option, "Foo.test*"),
+                    option(AddCallLogCommandLineProcessor.EXCLUDED_FQN.option, "Bar.*")
                 )
             }
         ).also { result -> result.assertSuccess() }

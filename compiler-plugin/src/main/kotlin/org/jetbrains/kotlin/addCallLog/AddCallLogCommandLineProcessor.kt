@@ -25,37 +25,33 @@ class AddCallLogCommandLineProcessor : CommandLineProcessor {
             CompilerConfigurationKey<Boolean>("Enable plugin")
         )
 
-        val EXCLUDED_FQNS = CmdOption(
-            "excludedFqns",
+        val EXCLUDED_FQN = CmdOption(
+            "excludedFqn",
             CliOption(
-                optionName = "excludedFqns",
-                valueDescription = "List<String>",
-                description = "Excluded fqns",
+                optionName = "excludedFqn",
+                valueDescription = "String",
+                description = "Excluded fqn",
                 required = false,
-                allowMultipleOccurrences = false,
+                allowMultipleOccurrences = true,
             ),
-            CompilerConfigurationKey<List<String>>("Excluded fqns")
+            CompilerConfigurationKey<String>("excluded fqn")
         )
     }
 
     override val pluginId: String = "playground.compiler.plugin.compiler"
-    override val pluginOptions: Collection<AbstractCliOption> = listOf(ENABLE.option, EXCLUDED_FQNS.option)
+    override val pluginOptions: Collection<AbstractCliOption> = listOf(ENABLE.option, EXCLUDED_FQN.option)
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
         when (option.optionName) {
             ENABLE.value -> configuration.put(ENABLE.key, value.toBoolean())
-            EXCLUDED_FQNS.value -> configuration.put(
-                EXCLUDED_FQNS.key,
-                value.toStringList()
-            )
-
+            EXCLUDED_FQN.value -> {
+                val existing = configuration.get(EXCLUDED_FQN.key)
+                if (existing != null) configuration.put(EXCLUDED_FQN.key, "$existing|$value")
+                else configuration.put(EXCLUDED_FQN.key, value)
+            }
             else -> error("Unknown plugin option: ${option.optionName}")
         }
     }
-}
-
-private fun String.toStringList(): List<String> {
-    return removeSurrounding("[", "]").split(',').map { it.trim() }
 }
 
 data class CmdOption<T>(

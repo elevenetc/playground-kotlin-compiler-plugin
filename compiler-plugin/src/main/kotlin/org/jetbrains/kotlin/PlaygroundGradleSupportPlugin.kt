@@ -22,16 +22,19 @@ class PlaygroundGradleSupportPlugin : KotlinCompilerPluginSupportPlugin {
         val extension = project.extensions.getByType(PlaygroundCompilerPluginSettingsExtension::class.java)
 
         val enabled = extension.enabled.get()
-        val excludedFqns = extension.excludedFqns.get().joinToString(",")
+        val excludedFqns = extension.excludedFqns.get()
+
+        val excludedFqnsOptions = excludedFqns.map {
+            SubpluginOption(
+                key = AddCallLogCommandLineProcessor.EXCLUDED_FQN.value,
+                value = it
+            )
+        }
 
         return project.provider {
             listOf(
                 SubpluginOption(key = AddCallLogCommandLineProcessor.ENABLE.value, value = enabled.toString()),
-                SubpluginOption(
-                    key = AddCallLogCommandLineProcessor.EXCLUDED_FQNS.value,
-                    value = excludedFqns
-                ),
-            )
+            ) + excludedFqnsOptions
         }
     }
 
