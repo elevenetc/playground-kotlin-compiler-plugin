@@ -29,6 +29,8 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.compileTesting)
     testImplementation(libs.cfr)
+
+    testImplementation(gradleTestKit())
 }
 
 //buildConfig {
