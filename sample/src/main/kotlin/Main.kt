@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.CallLogger
+import org.jetbrains.kotlin.IgnoreCallLog
 
 fun main() {
     val foo = Foo()
@@ -11,6 +12,7 @@ class Foo {
         privateFoo()
     }
 
+    @IgnoreCallLog
     private fun privateFoo() {
 
     }

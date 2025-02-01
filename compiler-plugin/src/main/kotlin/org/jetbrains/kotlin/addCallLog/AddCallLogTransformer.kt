@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.impl.IrTryImpl
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.statements
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.irCompanionPropertyCall
 import org.jetbrains.kotlin.utils.referenceCompanionPropertyFunction
@@ -45,6 +48,7 @@ class AddCallLogTransformer(
         val fqn = declaration.safeFqn()
         if (excludedPatterns.any { it.matches(fqn) }) return
         if (fqn.contains(CLASS_NAME)) return
+        if (declaration.hasAnnotation(ClassId(FqName("org.jetbrains.kotlin"), Name.identifier("IgnoreCallLog")))) return
 
         val typeUnit = context.irBuiltIns.unitType
         val typeThrowable = context.irBuiltIns.throwableType

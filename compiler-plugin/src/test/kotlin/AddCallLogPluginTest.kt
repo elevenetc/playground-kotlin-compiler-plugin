@@ -14,7 +14,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.uuid.ExperimentalUuidApi
 
-@OptIn(ExperimentalCompilerApi::class)
+@OptIn(ExperimentalCompilerApi::class, ExperimentalUuidApi::class)
 class AddCallLogPluginTest {
 
     @Rule
@@ -24,6 +24,46 @@ class AddCallLogPluginTest {
     @Before
     fun before() {
         CallLogger.instance.enableBump = false
+    }
+
+    @Test
+    fun `test - ignore annotation`() {
+        val source = """
+            import org.jetbrains.kotlin.IgnoreCallLog
+
+            class Foo {
+                @IgnoreCallLog
+                fun test() {
+                    println("test")
+                }
+
+                fun notIgnored() {
+                    println("not ignored")
+                }
+            }
+        """.trimIndent()
+
+        val result = compile(
+            sourceInfo = buildSourceInfo(tempDir, source),
+            registrar = AddCallLogPluginRegistrar(),
+            processor = AddCallLogCommandLineProcessor()
+        ).also { result -> result.assertSuccess() }
+
+        val expected = """
+            public final class Foo {
+                @IgnoreCallLog
+                public final void test() {
+                    System.out.println((Object)"test");
+                }
+                public final void notIgnored() {
+                    Uuid uuid = CallLogger.Companion.getInstance().start("Foo.notIgnored");
+                    System.out.println((Object)"not ignored");
+                    CallLogger.Companion.getInstance().end(uuid);
+                }
+            }
+        """.trimIndent()
+
+        assertEqualsCode(expected, result.decompileClassAndTrim("Foo.class"))
     }
 
     @Test
@@ -229,7 +269,6 @@ class AddCallLogPluginTest {
         assertEquals(expected, result.decompileClassAndTrim("Foo.class"))
     }
 
-    @OptIn(ExperimentalUuidApi::class)
     @Test
     fun `test - lambda control flow`() {
         val source = """
@@ -284,7 +323,6 @@ class AddCallLogPluginTest {
         assertEquals(expected, result.decompileClassAndTrim("SourceKt.class"))
     }
 
-    @OptIn(ExperimentalUuidApi::class)
     @Test
     fun `test - log calls injected in the beginning and the end of body`() {
 

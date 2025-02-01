@@ -6,10 +6,21 @@ private const val blue = "\u001B[34m"
 private const val reset = "\u001B[0m"
 
 fun printlnCode(value: String, fileName: String = "") {
-    if (fileName.isNotEmpty()) print("${yellow}$fileName${reset}\n")
-    println(value.lines().joinToString(separator = "") { line ->
-        "${green}${line.addSyntaxStyling()}${reset}\n"
-    })
+    printFileName(fileName)
+    println(buildPrintlnCode(value, fileName))
+}
+
+fun printFileName(fileName: String) {
+    if (fileName.isNotEmpty()) println("${yellow}$fileName${reset}\n")
+}
+
+fun buildPrintlnCode(value: String, fileName: String = ""): String {
+    return buildString {
+        var lineId = 0
+        appendLine(value.lines().joinToString(separator = "") { line ->
+            (lineId++).toString() + ": " + "${green}${line.addSyntaxStyling()}${reset}\n"
+        })
+    }
 }
 
 private fun String.addSyntaxStyling(): String {
