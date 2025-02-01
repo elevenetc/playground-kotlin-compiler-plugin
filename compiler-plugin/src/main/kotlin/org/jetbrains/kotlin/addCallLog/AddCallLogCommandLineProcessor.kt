@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.config.CompilerConfigurationKey
 class AddCallLogCommandLineProcessor : CommandLineProcessor {
 
     companion object {
-        val ENABLE = CmdOption<Boolean>(
+        val ENABLE = CmdOption(
             "enabledValue",
             CliOption(
                 optionName = "enabledValue",
@@ -25,7 +25,7 @@ class AddCallLogCommandLineProcessor : CommandLineProcessor {
             CompilerConfigurationKey<Boolean>("Enable plugin")
         )
 
-        val EXCLUDED_FQNS = CmdOption<List<String>>(
+        val EXCLUDED_FQNS = CmdOption(
             "excludedFqns",
             CliOption(
                 optionName = "excludedFqns",
