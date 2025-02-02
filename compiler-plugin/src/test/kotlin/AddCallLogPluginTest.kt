@@ -23,7 +23,7 @@ class AddCallLogPluginTest {
 
     @Before
     fun before() {
-        CallLogger.instance.enableBump = false
+        CallLogger.instance.enableDump = false
     }
 
     @Test
@@ -356,10 +356,13 @@ class AddCallLogPluginTest {
 
         val loader = result.classLoader
         val foo = loader.loadClass("Foo").kotlin.newInstance()
-        val calls = CallLogger.instance.calls
+        val threads = CallLogger.instance.threads
 
-        calls.assertEmpty()
+        threads.assertEmpty()
         foo.call("bar")
+
+        val calls = threads.values.first().calls
+
         calls.assertSizeOf(1)
         foo.call("bar")
         calls.assertSizeOf(2)

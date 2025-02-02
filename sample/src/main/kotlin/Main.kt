@@ -1,19 +1,28 @@
 import org.jetbrains.kotlin.CallLogger
-import org.jetbrains.kotlin.IgnoreCallLog
+import kotlin.concurrent.thread
 
 fun main() {
     val foo = Foo()
-    foo.bar()
+
+    thread(name = "a") {
+        foo.threadA()
+    }.join()
+
+    thread(name = "b") {
+        foo.threadB()
+    }.join()
+    
     println(CallLogger.instance.dumpToString())
 }
 
 class Foo {
-    fun bar() {
-        privateFoo()
+
+
+    fun threadA() {
+
     }
 
-    @IgnoreCallLog
-    private fun privateFoo() {
+    fun threadB() {
 
     }
 }

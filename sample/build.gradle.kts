@@ -24,6 +24,6 @@ kotlin {
 playgroundCompilerPluginSettings {
     enabled = true
     excludedFqns = listOf(
-        "*bar*"
+        "*<anonymous>"
     )
 }

@@ -19,10 +19,10 @@ class CallTreeTests {
 
         }
 
-        val currentCall = logger.currentCall
+        val currentCall = logger.threads.values.first().currentCall
         assertEquals("CallTreeTests.test - lambda argument", currentCall?.fqn ?: error("current call is null"))
         assertEquals(1, currentCall.children.size)
-        assertEquals("CallTreeTests.test - lambda argument.<anonymous>", currentCall.children[0].fqn)
+        assertEquals("CallTreeTests.test - lambda argument.Foo.bar", currentCall.children[0].fqn)
     }
 
     @Test

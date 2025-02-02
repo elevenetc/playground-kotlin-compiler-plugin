@@ -6,59 +6,95 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalUuidApi::class)
 class CallLogger {
 
-    val calls = mutableMapOf<Uuid, Call>()
-    var currentCall: Call? = null
+    val threads = LinkedHashMap<Long, ThreadContainer>()
     val history = mutableListOf<Call>()
-    var enableBump = false
+    var enableDump = false
 
     fun start(callFqn: String): Uuid {
-        val call = Call(Uuid.random(), callFqn, System.currentTimeMillis(), -1, Thread.currentThread().name)
-        calls[call.id] = call
+        val call = newCall(callFqn)
 
-        if (currentCall?.ended == false) {
-            currentCall?.children?.add(call)
+        val t = getCurrentThreadContainer()
+
+        if (t.root == null) {
+            t.root = call
+        }
+
+        t.calls[call.id] = call
+
+        if (t.currentCall?.ended == false) {
+            t.currentCall?.children?.add(call)
         } else {
             /**
              * Current call is ended.
              * TODO: create new tree? Current workaround is to attach to existing one
              */
-            currentCall?.children?.add(call)
+            t.currentCall?.children?.add(call)
         }
-        call.parent = currentCall
+        call.parent = t.currentCall
         updateCurrent(call)
         return call.id
     }
 
     fun end(id: Uuid) {
-        calls[id] ?: error("Call $id does not exist")
-        calls[id]?.end = System.currentTimeMillis()
-        updateCurrent(currentCall?.parent)
-        if (enableBump) LoggerDumper.instance.dump(this)
+        val t = getCurrentThreadContainer()
+        t.calls[id] ?: error("Call $id does not exist")
+        t.calls[id]?.end = System.currentTimeMillis()
+        updateCurrent(t.currentCall?.parent)
+        if (enableDump) LoggerDumper.instance.dump(this)
     }
 
     fun dumpToString(): String {
         return LoggerDumper.instance.dumpToString(this)
     }
 
+    private fun getCurrentThreadContainer(): ThreadContainer {
+        val currentThread = Thread.currentThread()
+        val id = currentThread.threadId()
+        if (!threads.containsKey(id)) {
+            threads[id] = ThreadContainer(ThreadId(id, currentThread.name))
+        }
+        return threads[id] ?: error("Thread container with id=$id is not found")
+    }
+
     private fun updateCurrent(call: Call?) {
         if (call != null) {
+            val t = getCurrentThreadContainer()
             history.add(call)
-            currentCall = call
+            t.currentCall = call
         }
     }
+
+    private fun newCall(callFqn: String) =
+        Call(
+            id = Uuid.random(),
+            fqn = callFqn,
+            start = System.currentTimeMillis(),
+            end = -1,
+            thread = ThreadId(Thread.currentThread().threadId(), Thread.currentThread().name)
+        )
 
     data class Call(
         val id: Uuid,
         val fqn: String,
         val start: Long,
         var end: Long,
-        val threadName: String
+        val thread: ThreadId
     ) {
         var parent: Call? = null
         val children = mutableListOf<Call>()
     }
 
-    val Call.ended: Boolean
+    data class ThreadId(val id: Long, val name: String)
+
+    data class ThreadContainer(
+        val id: ThreadId
+    ) {
+        var root: Call? = null
+        val calls = mutableMapOf<Uuid, Call>()
+        var currentCall: Call? = null
+    }
+
+    private val Call.ended: Boolean
         get() = this.end != -1L
 
     companion object {

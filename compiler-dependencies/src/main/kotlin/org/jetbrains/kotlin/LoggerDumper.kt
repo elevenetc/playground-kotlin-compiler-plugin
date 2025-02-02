@@ -31,13 +31,24 @@ class LoggerDumper {
 
     private fun createDump(logger: CallLogger): DumpLog {
 
-        val root = logger.history.first()
-        val log = DumpLog(
-            System.currentTimeMillis(),
-            logger.history.map { DumpLog.HistoryItem(it.id.toString(), it.start, it.end, it.threadName, it.fqn) },
-            root.toTreeNode()
+        val history =
+            logger.history.map { DumpLog.HistoryItem(it.id.toString(), it.start, it.end, it.thread.name, it.fqn) }
+
+        val roots = logger.threads.map {
+            val threadContainer = it.value
+            threadContainer.root?.toTreeNode() ?: error("Thread container doesn't have root")
+        }.associateBy { it.threadId }
+
+        val threadsNames = logger.threads.map {
+            it.key to it.value.id.name
+        }.toMap()
+
+        return DumpLog(
+            timestamp = System.currentTimeMillis(),
+            history = history,
+            threadsRoots = roots,
+            threadsNamesMap = threadsNames
         )
-        return log
     }
 
     companion object {
@@ -50,7 +61,7 @@ private fun CallLogger.Call.toTreeNode(): DumpLog.TreeNode {
     val children = this.children.map {
         it.toTreeNode()
     }
-    return DumpLog.TreeNode(this.id.toString(), this.start, this.end, this.fqn, this.threadName, children)
+    return DumpLog.TreeNode(this.id.toString(), this.start, this.end, this.fqn, this.thread.id, children)
 }
 
 private const val filePath = "build/generated/logger-dump"
@@ -60,8 +71,10 @@ private const val fileName = "log.json"
 data class DumpLog(
     val timestamp: Long,
     val history: List<HistoryItem>,
-    val treeRoot: TreeNode
+    val threadsRoots: Map<Long, TreeNode>,
+    val threadsNamesMap: Map<Long, String>
 ) {
+
     @Serializable
     data class HistoryItem(
         val id: String, val start: Long, val end: Long,
@@ -72,7 +85,7 @@ data class DumpLog(
     @Serializable
     data class TreeNode(
         val id: String, val start: Long, val end: Long, val fqn: String,
-        val threadName: String,
+        val threadId: Long,
         val children: List<TreeNode>
     )
 }
