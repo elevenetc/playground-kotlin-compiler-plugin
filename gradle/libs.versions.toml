@@ -3,7 +3,7 @@
 # https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
 
 [versions]
-kotlin = "2.0.21"
+kotlin = "2.2.0-Beta1"
 kotlinxDatetime = "0.6.1"
 kotlinxSerializationJSON = "1.7.2"
 kotlinxCoroutines = "1.8.1"
@@ -25,13 +25,14 @@ kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref =
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 junitJupiter = { module = "org.junit.jupiter:junit-jupiter", version = "5.10.0" }
 junit = { module = "junit:junit", version = "4.13.2" }
-kotlin-CompileTesting = { module = "dev.zacsweers.kctfork:core", version.ref = "kotlinCompileTesting" }
 cfr = { module = "org.benf:cfr", version = "0.152" }
 autoService = { module = "com.google.auto.service:auto-service", version.ref = "autoService" }
 autoServiceAnnotations = { module = "com.google.auto.service:auto-service-annotations", version.ref = "autoService" }
 autoService-ksp = { module = "dev.zacsweers.autoservice:auto-service-ksp", version = "1.2.0" }
 ksp = { module = "com.google.devtools.ksp:symbol-processing", version.ref = "ksp" }
 ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
+okio = "com.squareup.okio:okio:3.10.2"
+classgraph = "io.github.classgraph:classgraph:4.8.179"
 
 # Libraries can be bundled together for easier import
 [bundles]
