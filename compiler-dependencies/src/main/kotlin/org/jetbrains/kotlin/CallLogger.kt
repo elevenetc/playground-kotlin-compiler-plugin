@@ -49,7 +49,7 @@ class CallLogger {
 
     private fun getCurrentThreadContainer(): ThreadContainer {
         val currentThread = Thread.currentThread()
-        val id = currentThread.threadId()
+        val id = currentThread.id
         if (!threads.containsKey(id)) {
             threads[id] = ThreadContainer(ThreadId(id, currentThread.name))
         }
@@ -70,7 +70,7 @@ class CallLogger {
             fqn = callFqn,
             start = System.currentTimeMillis(),
             end = -1,
-            thread = ThreadId(Thread.currentThread().threadId(), Thread.currentThread().name)
+            thread = ThreadId(Thread.currentThread().id, Thread.currentThread().name)
         )
 
     data class Call(

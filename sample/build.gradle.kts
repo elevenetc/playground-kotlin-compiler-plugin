@@ -18,7 +18,7 @@ group = "org.jetbrains.kotlin"
 version = "unspecified"
 
 kotlin {
-    jvmToolchain(20)
+    jvmToolchain(8)
 }
 
 playgroundCompilerPluginSettings {

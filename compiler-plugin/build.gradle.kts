@@ -12,11 +12,12 @@ repositories {
 
 dependencies {
     compileOnly(libs.kotlin.gradlePlugin.api)
-    compileOnly(libs.kotlin.compilerEmbeddable)
+    api(libs.kotlin.compilerEmbeddable)
     compileOnly(libs.kotlin.stdlib)
     compileOnly("com.google.auto.service:auto-service-annotations:1.1.1")
+    testCompileOnly("com.google.auto.service:auto-service-annotations:1.1.1")
 
-    kapt("com.google.auto.service:auto-service:1.1.1")
+    //kapt("com.google.auto.service:auto-service:1.1.1")
 
     implementation("org.jetbrains.kotlin:compiler-dependencies:0.0.1")
 
@@ -27,7 +28,8 @@ dependencies {
     testImplementation(libs.kotlin.compilerTestFramework)
     testImplementation(libs.kotlin.test)
     testImplementation(libs.junit)
-    testImplementation(libs.kotlin.compileTesting)
+    testImplementation(libs.okio)
+    testImplementation(libs.classgraph)
     testImplementation(libs.cfr)
 
     testImplementation(gradleTestKit())
@@ -49,7 +51,7 @@ version = pluginVersion
 group = pluginGroupId
 
 kotlin {
-    jvmToolchain(20)
+    jvmToolchain(8)
 }
 
 gradlePlugin {
