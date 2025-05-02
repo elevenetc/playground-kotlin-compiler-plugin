@@ -1,13 +1,15 @@
 package org.jetbrains.kotlin.utils
 
+import org.jetbrains.kotlin.ir.builders.IrBuilder
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGetObject
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 
 /**
  * Takes companion property function:
@@ -32,8 +34,9 @@ fun IrBuilderWithScope.irCompanionPropertyCall(
     method: IrSimpleFunctionSymbol,
     arguments: List<IrExpression> = emptyList()
 ): IrCall {
-    return irCall(method).apply {
-        dispatchReceiver = irCall(propertyGetter).apply {
+    val builder = this as IrBuilder
+    return builder.irCall(method).apply {
+        dispatchReceiver = (builder).irCall(propertyGetter).apply {
             dispatchReceiver = irGetObject(companion)
         }
     }.apply {
@@ -48,4 +51,26 @@ fun IrBuilderWithScope.irCompanionPropertyCall(
     arguments: List<IrExpression> = emptyList()
 ): IrCall {
     return irCompanionPropertyCall(triple.first, triple.second, triple.third, arguments)
+}
+
+//fun IrBuilder.irGetObject(irClassSymbol: IrClassSymbol): IrExpression {
+//
+//}
+
+@OptIn(UnsafeDuringIrConstructionAPI::class)
+fun IrBuilder.irCall(function: IrSimpleFunction): IrCall {
+    val callee = function.symbol
+    return irCall(callee)
+}
+
+@OptIn(UnsafeDuringIrConstructionAPI::class)
+private fun IrBuilder.irCall(callee: IrSimpleFunctionSymbol): IrCall {
+    val type = callee.owner.returnType
+    val typeArgumentsCount = callee.owner.typeParameters.size
+    val origin = null
+    return IrCallImpl(
+        startOffset, endOffset, type, callee,
+        typeArgumentsCount = typeArgumentsCount,
+        origin = origin
+    )
 }

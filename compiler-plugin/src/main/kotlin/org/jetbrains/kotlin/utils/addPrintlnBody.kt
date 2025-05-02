@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.FqName.topLevel
+import org.jetbrains.kotlin.name.FqName.Companion.topLevel
 import org.jetbrains.kotlin.name.Name.identifier
 
 @OptIn(UnsafeDuringIrConstructionAPI::class)
