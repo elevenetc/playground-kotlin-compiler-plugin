@@ -47,17 +47,11 @@ fun IrBuilderWithScope.irCompanionPropertyCall(
 }
 
 fun IrBuilderWithScope.irCompanionPropertyCall(
-    triple: Triple<IrClassSymbol, IrSimpleFunction, IrSimpleFunctionSymbol>,
-    arguments: List<IrExpression> = emptyList()
+    irCall: IrCompanionPropertyFunctionCall
 ): IrCall {
-    return irCompanionPropertyCall(triple.first, triple.second, triple.third, arguments)
+    return irCompanionPropertyCall(irCall.irClass, irCall.irProperty, irCall.irFun, irCall.arguments)
 }
 
-//fun IrBuilder.irGetObject(irClassSymbol: IrClassSymbol): IrExpression {
-//
-//}
-
-@OptIn(UnsafeDuringIrConstructionAPI::class)
 fun IrBuilder.irCall(function: IrSimpleFunction): IrCall {
     val callee = function.symbol
     return irCall(callee)
