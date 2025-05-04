@@ -490,4 +490,35 @@ class AddCallLogPluginTest {
 
         assertEqualsCode(expected, actual)
     }
+
+    @Test
+    fun `test - exclude by file name`() {
+        val source = """
+            fun foo() {
+
+            }
+        """.trimIndent()
+
+        val fileName = "foo.kt"
+        val result = compile(
+            sourceInfo = buildSourceInfo(tempDir, source, fileName),
+            registrar = AddCallLogPluginRegistrar(),
+            processor = AddCallLogCommandLineProcessor(),
+            options = {
+                listOf(
+                    option(AddCallLogCommandLineProcessor.EXCLUDED_FILES.option, fileName)
+                )
+            }
+        ).also { result -> result.assertSuccess() }
+
+        val expected = """
+            public final class FooKt {
+                public static final void foo() {
+                }
+            }
+        """.trimIndent()
+
+        val actual = result.decompileClassAndTrim("FooKt.class")
+        assertEqualsCode(expected, actual)
+    }
 }

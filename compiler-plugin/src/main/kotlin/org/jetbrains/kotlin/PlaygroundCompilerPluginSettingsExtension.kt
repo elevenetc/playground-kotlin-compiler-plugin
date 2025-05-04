@@ -9,4 +9,5 @@ abstract class PlaygroundCompilerPluginSettingsExtension @Inject constructor(obj
         objects.property(Boolean::class.javaObjectType).convention(true)
 
     val excludedFqns = objects.listProperty(String::class.java).convention(emptyList())
+    val excludedFiles = objects.listProperty(String::class.java).convention(emptyList())
 }

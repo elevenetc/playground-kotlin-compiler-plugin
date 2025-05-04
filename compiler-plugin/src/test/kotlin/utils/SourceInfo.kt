@@ -15,8 +15,8 @@ data class SourceInfo(
     }
 }
 
-fun buildSourceInfo(tempDir: TemporaryFolder, @Language("kotlin") source: String): SourceInfo {
-    return buildSourceInfo(tempDir).addSources(SourceFile.kotlin("source.kt", source))
+fun buildSourceInfo(tempDir: TemporaryFolder, @Language("kotlin") source: String, fileName: String = "source.kt"): SourceInfo {
+    return buildSourceInfo(tempDir).addSources(SourceFile.kotlin(fileName, source))
 }
 
 fun buildSourceInfo(tempDir: TemporaryFolder): SourceInfo {

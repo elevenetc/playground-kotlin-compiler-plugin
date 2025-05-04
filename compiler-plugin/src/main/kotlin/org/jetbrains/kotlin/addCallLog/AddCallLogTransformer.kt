@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.statements
@@ -27,6 +29,7 @@ import org.jetbrains.kotlin.utils.withDeclarationIrBuilder
 
 class AddCallLogTransformer(
     private val excludedFqns: List<String>,
+    private val excludedFiles: List<String>,
     private val context: IrPluginContext
 ) : IrElementTransformerVoidWithContext() {
     private val excludedPatterns: List<Regex> = excludedFqns.map { pattern ->
@@ -48,6 +51,7 @@ class AddCallLogTransformer(
 
     private fun wrapDeclarationWithLogs(declaration: IrFunction) {
         val fqn = declaration.safeFqn()
+        if (excludedFiles.contains(declaration.file.name)) return
         if (excludedPatterns.any { it.matches(fqn) }) return
         if (fqn.contains(CLASS_NAME)) return
         if (declaration.hasAnnotation(ClassId(FqName("org.jetbrains.kotlin"), Name.identifier("IgnoreCallLog")))) return

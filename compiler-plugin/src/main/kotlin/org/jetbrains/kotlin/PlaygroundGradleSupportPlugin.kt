@@ -23,18 +23,26 @@ class PlaygroundGradleSupportPlugin : KotlinCompilerPluginSupportPlugin {
 
         val enabled = extension.enabled.get()
         val excludedFqns = extension.excludedFqns.get()
+        val excludedFiles = extension.excludedFiles.get()
 
-        val excludedFqnsOptions = excludedFqns.map {
+        val excludedFqnsOptions = excludedFqns.map { fqn ->
             SubpluginOption(
                 key = AddCallLogCommandLineProcessor.EXCLUDED_FQN.value,
-                value = it
+                value = fqn
+            )
+        }
+
+        val excludedFilesOptions = excludedFiles.map { file ->
+            SubpluginOption(
+                key = AddCallLogCommandLineProcessor.EXCLUDED_FILES.value,
+                value = file
             )
         }
 
         return project.provider {
             listOf(
                 SubpluginOption(key = AddCallLogCommandLineProcessor.ENABLE.value, value = enabled.toString()),
-            ) + excludedFqnsOptions
+            ) + excludedFqnsOptions + excludedFilesOptions
         }
     }
 

@@ -36,10 +36,26 @@ class AddCallLogCommandLineProcessor : CommandLineProcessor {
             ),
             CompilerConfigurationKey<String>("excluded fqn")
         )
+
+        val EXCLUDED_FILES = CmdOption(
+            "excludedFiles",
+            CliOption(
+                optionName = "excludedFiles",
+                valueDescription = "String",
+                description = "Excluded files",
+                required = false,
+                allowMultipleOccurrences = true,
+            ),
+            CompilerConfigurationKey<String>("excluded files")
+        )
     }
 
     override val pluginId: String = "playground.compiler.plugin.compiler"
-    override val pluginOptions: Collection<AbstractCliOption> = listOf(ENABLE.option, EXCLUDED_FQN.option)
+    override val pluginOptions: Collection<AbstractCliOption> = listOf(
+        ENABLE.option,
+        EXCLUDED_FQN.option,
+        EXCLUDED_FILES.option
+    )
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
         when (option.optionName) {
@@ -49,6 +65,13 @@ class AddCallLogCommandLineProcessor : CommandLineProcessor {
                 if (existing != null) configuration.put(EXCLUDED_FQN.key, "$existing|$value")
                 else configuration.put(EXCLUDED_FQN.key, value)
             }
+
+            EXCLUDED_FILES.value -> {
+                val existing = configuration.get(EXCLUDED_FILES.key)
+                if (existing != null) configuration.put(EXCLUDED_FILES.key, "$existing|$value")
+                else configuration.put(EXCLUDED_FILES.key, value)
+            }
+
             else -> error("Unknown plugin option: ${option.optionName}")
         }
     }

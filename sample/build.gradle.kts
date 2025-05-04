@@ -26,4 +26,5 @@ playgroundCompilerPluginSettings {
     excludedFqns = listOf(
         "*<anonymous>"
     )
+    excludedFiles = listOf("Foo.kt")
 }
