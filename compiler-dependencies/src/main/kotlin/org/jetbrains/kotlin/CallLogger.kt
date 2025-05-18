@@ -10,6 +10,12 @@ class CallLogger {
     val history = mutableListOf<Call>()
     var enableDump = false
 
+    init {
+        Runtime.getRuntime().addShutdownHook(Thread {
+            storeDump(dumpToString())
+        })
+    }
+
     fun start(callFqn: String): Uuid {
         val call = newCall(callFqn)
 
