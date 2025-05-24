@@ -2,7 +2,6 @@ package org.jetbrains.kotlin.addCallLog
 
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.IrBuilder
 import org.jetbrains.kotlin.ir.builders.irBlock
@@ -13,19 +12,13 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.statements
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.IrCompanionPropertyFunctionCall
-import org.jetbrains.kotlin.utils.irCompanionPropertyCall
-import org.jetbrains.kotlin.utils.referenceCompanionPropertyFunction
-import org.jetbrains.kotlin.utils.withDeclarationIrBuilder
+import org.jetbrains.kotlin.utils.*
 
 class AddCallLogTransformer(
     private val excludedFqns: List<String>,
@@ -50,7 +43,7 @@ class AddCallLogTransformer(
     }
 
     private fun wrapDeclarationWithLogs(declaration: IrFunction) {
-        val fqn = declaration.safeFqn()
+        val fqn = declaration.safeIrFunctionFqn()
         if (excludedFiles.contains(declaration.file.name)) return
         if (excludedPatterns.any { it.matches(fqn) }) return
         if (fqn.contains(CLASS_NAME)) return
@@ -80,7 +73,7 @@ class AddCallLogTransformer(
                         +irCompanionPropertyCall(end.copy(arguments = endArgs))
                     }
                 }
-                val returnTransformer = AddPreReturnIrCallTransformer(
+                val returnTransformer = PreReturnIrCallTransformer(
                     this@AddCallLogTransformer.context,
                     declaration,
                     end.copy(arguments = endArgs)
@@ -89,36 +82,4 @@ class AddCallLogTransformer(
             }
         }
     }
-}
-
-fun IrBuilder.irString(value: String): IrConstImpl {
-    return IrConstImpl.string(startOffset, endOffset, context.irBuiltIns.stringType, value)
-}
-
-private class AddPreReturnIrCallTransformer(
-    private val pluginContext: IrPluginContext,
-    private val function: IrFunction,
-    private val irCall: IrCompanionPropertyFunctionCall
-) : IrTransformer<Nothing?>() {
-
-    override fun visitReturn(
-        expression: IrReturn,
-        data: Nothing?
-    ): IrExpression {
-
-        if (expression.returnTargetSymbol != function.symbol) return super.visitReturn(expression, data)
-
-        return DeclarationIrBuilder(pluginContext, function.symbol).irBlock {
-            +irCompanionPropertyCall(irCall)
-            +expression
-        }
-    }
-}
-
-/**
- * [IrFunction.callableId] might throw exception in set of cases
- * So [fqNameForIrSerialization] is used instead
- */
-private fun IrFunction.safeFqn(): String {
-    return this.fqNameForIrSerialization.toString()
 }
