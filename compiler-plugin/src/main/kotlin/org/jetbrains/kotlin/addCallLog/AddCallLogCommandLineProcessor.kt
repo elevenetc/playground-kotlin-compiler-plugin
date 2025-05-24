@@ -48,13 +48,26 @@ class AddCallLogCommandLineProcessor : CommandLineProcessor {
             ),
             CompilerConfigurationKey<String>("excluded files")
         )
+
+        val TRACE_CLASS = CmdOption(
+            "traceClass",
+            CliOption(
+                optionName = "traceClass",
+                valueDescription = "String",
+                description = "FQN of class to be traced",
+                required = false,
+                allowMultipleOccurrences = true,
+            ),
+            CompilerConfigurationKey<String>("trace class fqn")
+        )
     }
 
     override val pluginId: String = "playground.compiler.plugin.compiler"
     override val pluginOptions: Collection<AbstractCliOption> = listOf(
         ENABLE.option,
         EXCLUDED_FQN.option,
-        EXCLUDED_FILES.option
+        EXCLUDED_FILES.option,
+        TRACE_CLASS.option,
     )
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
@@ -70,6 +83,12 @@ class AddCallLogCommandLineProcessor : CommandLineProcessor {
                 val existing = configuration.get(EXCLUDED_FILES.key)
                 if (existing != null) configuration.put(EXCLUDED_FILES.key, "$existing|$value")
                 else configuration.put(EXCLUDED_FILES.key, value)
+            }
+
+            TRACE_CLASS.value -> {
+                val existing = configuration.get(TRACE_CLASS.key)
+                if (existing != null) configuration.put(TRACE_CLASS.key, "$existing|$value")
+                else configuration.put(TRACE_CLASS.key, value)
             }
 
             else -> error("Unknown plugin option: ${option.optionName}")

@@ -20,8 +20,11 @@ class AddCallLogPluginRegistrar : CompilerPluginRegistrar() {
         val rawFiles = configuration.get(AddCallLogCommandLineProcessor.EXCLUDED_FILES.key) ?: ""
         val files = rawFiles.split("|")
 
+        val rawTracesClassesFqns = configuration.get(AddCallLogCommandLineProcessor.TRACE_CLASS.key) ?: ""
+        val tracesClassesFqns = rawTracesClassesFqns.split("|")
+
         IrGenerationExtension.registerExtension(
-            AddCallLogPluginExtension(fqns, files)
+            AddCallLogPluginExtension(fqns, files, tracesClassesFqns)
         )
     }
 }
