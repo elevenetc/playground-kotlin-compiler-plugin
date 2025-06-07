@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.ir.builders.IrBuilder
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irTemporary
+import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.name
@@ -38,16 +39,17 @@ class AddCallLogTransformer(
 
     override fun visitFunctionNew(declaration: IrFunction): IrStatement {
         if (declaration is IrConstructor) return super.visitFunctionNew(declaration)
-        wrapDeclarationWithLogs(declaration)
+        traceDeclaration(declaration)
         return super.visitFunctionNew(declaration)
     }
 
-    private fun wrapDeclarationWithLogs(declaration: IrFunction) {
+    private fun traceDeclaration(declaration: IrFunction) {
         val fqn = declaration.safeIrFunctionFqn()
         if (excludedFiles.contains(declaration.file.name)) return
         if (excludedPatterns.any { it.matches(fqn) }) return
         if (fqn.contains(CLASS_NAME)) return
-        if (declaration.hasAnnotation(ClassId(FqName("org.jetbrains.kotlin"), Name.identifier("IgnoreCallLog")))) return
+        if (declaration.hasIgnoreCallAnnotation()) return
+        if (declaration.containingIrClassOrNull()?.hasIgnoreCallAnnotation() == true) return
 
         val start = context.referenceCompanionPropertyFunction(CLASS_NAME, STATIC_PROPERTY, START_METHOD)
         val end = context.referenceCompanionPropertyFunction(CLASS_NAME, STATIC_PROPERTY, END_METHOD)
@@ -82,4 +84,8 @@ class AddCallLogTransformer(
             }
         }
     }
+}
+
+private fun IrAnnotationContainer.hasIgnoreCallAnnotation(): Boolean {
+    return hasAnnotation(ClassId(FqName("org.jetbrains.kotlin"), Name.identifier("IgnoreCallLog")))
 }

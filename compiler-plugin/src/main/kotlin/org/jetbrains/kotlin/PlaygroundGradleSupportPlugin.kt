@@ -2,7 +2,11 @@ package org.jetbrains.kotlin
 
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.addCallLog.AddCallLogCommandLineProcessor
+import org.jetbrains.kotlin.addCallLog.AddCallLogCommandLineProcessor.Companion.ENABLE_CALLS_TRACING
+import org.jetbrains.kotlin.addCallLog.AddCallLogCommandLineProcessor.Companion.ENABLE_CLASS_TRACING
+import org.jetbrains.kotlin.addCallLog.AddCallLogCommandLineProcessor.Companion.EXCLUDED_FILES
+import org.jetbrains.kotlin.addCallLog.AddCallLogCommandLineProcessor.Companion.EXCLUDED_FQN
+import org.jetbrains.kotlin.addCallLog.AddCallLogCommandLineProcessor.Companion.TRACE_CLASS
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
@@ -21,36 +25,49 @@ class PlaygroundGradleSupportPlugin : KotlinCompilerPluginSupportPlugin {
         val project = kotlinCompilation.target.project
         val extension = project.extensions.getByType(PlaygroundCompilerPluginSettingsExtension::class.java)
 
-        val enabled = extension.enabled.get()
-        val excludedFqns = extension.excludedFqns.get()
-        val excludedFiles = extension.excludedFiles.get()
+        val enabledCallsTracing = extension.enabledCallsTracing.get()
+        val excludedFqns = extension.excludedCallsFqns.get()
+        val excludedFiles = extension.excludedCallsFiles.get()
+
+        val enabledClassTracing = extension.enabledClassTracing.get()
         val traceClassesFqns = extension.traceClassesFqns.get()
 
         val excludedFqnsOptions = excludedFqns.map { fqn ->
             SubpluginOption(
-                key = AddCallLogCommandLineProcessor.EXCLUDED_FQN.value,
+                key = EXCLUDED_FQN.value,
                 value = fqn
             )
         }
 
         val excludedFilesOptions = excludedFiles.map { file ->
             SubpluginOption(
-                key = AddCallLogCommandLineProcessor.EXCLUDED_FILES.value,
+                key = EXCLUDED_FILES.value,
                 value = file
             )
         }
 
         val traceClassesFqnsOptions = traceClassesFqns.map { fqn ->
             SubpluginOption(
-                key = AddCallLogCommandLineProcessor.TRACE_CLASS.value,
+                key = TRACE_CLASS.value,
                 value = fqn
             )
         }
 
+        val options = listOf(
+            SubpluginOption(
+                key = ENABLE_CALLS_TRACING.value,
+                value = enabledCallsTracing.toString()
+            ),
+            SubpluginOption(
+                key = ENABLE_CLASS_TRACING.value,
+                value = enabledClassTracing.toString()
+            )
+        ) + excludedFqnsOptions + excludedFilesOptions + traceClassesFqnsOptions
+
+        println("OPTS: ${options.map { it.key + "=" + it.value }}")
+
         return project.provider {
-            listOf(
-                SubpluginOption(key = AddCallLogCommandLineProcessor.ENABLE.value, value = enabled.toString()),
-            ) + excludedFqnsOptions + excludedFilesOptions + traceClassesFqnsOptions
+            options
         }
     }
 

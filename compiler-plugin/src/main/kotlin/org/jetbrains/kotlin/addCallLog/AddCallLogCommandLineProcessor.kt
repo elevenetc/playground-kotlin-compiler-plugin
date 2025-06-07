@@ -13,66 +13,88 @@ import org.jetbrains.kotlin.config.CompilerConfigurationKey
 class AddCallLogCommandLineProcessor : CommandLineProcessor {
 
     companion object {
-        val ENABLE = CmdOption(
-            "enabledValue",
+
+        /**
+         * Calls tracing
+         */
+
+        val ENABLE_CALLS_TRACING = CmdOption(
+            "enableCallsTracing",
             CliOption(
-                optionName = "enabledValue",
+                optionName = "enableCallsTracing",
                 valueDescription = "Boolean",
-                description = "Enable plugin",
+                description = "Enable call tracing for all functions",
                 required = false,
-                allowMultipleOccurrences = false,
             ),
-            CompilerConfigurationKey<Boolean>("Enable plugin")
+            CompilerConfigurationKey<Boolean>("Enable call tracing for all functions")
         )
 
         val EXCLUDED_FQN = CmdOption(
-            "excludedFqn",
+            "excludedCallsTracingFqns",
             CliOption(
-                optionName = "excludedFqn",
+                optionName = "excludedCallsTracingFqns",
                 valueDescription = "String",
-                description = "Excluded fqn",
+                description = "Excluded calls tracing fqns",
                 required = false,
                 allowMultipleOccurrences = true,
             ),
-            CompilerConfigurationKey<String>("excluded fqn")
+            CompilerConfigurationKey<String>("excluded tracing fqn")
         )
 
         val EXCLUDED_FILES = CmdOption(
-            "excludedFiles",
+            "excludedCallsTracingFiles",
             CliOption(
-                optionName = "excludedFiles",
+                optionName = "excludedCallsTracingFiles",
                 valueDescription = "String",
-                description = "Excluded files",
+                description = "Excluded files tracing fqns",
                 required = false,
                 allowMultipleOccurrences = true,
             ),
-            CompilerConfigurationKey<String>("excluded files")
+            CompilerConfigurationKey<String>("excluded tracing files")
+        )
+
+        /**
+         * Class tracing
+         */
+
+        val ENABLE_CLASS_TRACING = CmdOption(
+            "enableClassTracing",
+            CliOption(
+                optionName = "enableClassTracing",
+                valueDescription = "Boolean",
+                description = "Enable class tracing for classes listed in `traceClasses`",
+                required = false
+            ),
+            CompilerConfigurationKey<Boolean>("Enable call tracing for all functions")
         )
 
         val TRACE_CLASS = CmdOption(
-            "traceClass",
+            "traceClasses",
             CliOption(
-                optionName = "traceClass",
+                optionName = "traceClasses",
                 valueDescription = "String",
                 description = "FQN of class to be traced",
                 required = false,
                 allowMultipleOccurrences = true,
             ),
-            CompilerConfigurationKey<String>("trace class fqn")
+            CompilerConfigurationKey<String>("trace class fqns, separated by ','")
         )
     }
 
     override val pluginId: String = "playground.compiler.plugin.compiler"
+
     override val pluginOptions: Collection<AbstractCliOption> = listOf(
-        ENABLE.option,
+        ENABLE_CALLS_TRACING.option,
         EXCLUDED_FQN.option,
         EXCLUDED_FILES.option,
+
+        ENABLE_CLASS_TRACING.option,
         TRACE_CLASS.option,
     )
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
         when (option.optionName) {
-            ENABLE.value -> configuration.put(ENABLE.key, value.toBoolean())
+            ENABLE_CALLS_TRACING.value -> configuration.put(ENABLE_CALLS_TRACING.key, value.toBoolean())
             EXCLUDED_FQN.value -> {
                 val existing = configuration.get(EXCLUDED_FQN.key)
                 if (existing != null) configuration.put(EXCLUDED_FQN.key, "$existing|$value")
@@ -84,6 +106,9 @@ class AddCallLogCommandLineProcessor : CommandLineProcessor {
                 if (existing != null) configuration.put(EXCLUDED_FILES.key, "$existing|$value")
                 else configuration.put(EXCLUDED_FILES.key, value)
             }
+
+
+            ENABLE_CLASS_TRACING.value -> configuration.put(ENABLE_CLASS_TRACING.key, value.toBoolean())
 
             TRACE_CLASS.value -> {
                 val existing = configuration.get(TRACE_CLASS.key)

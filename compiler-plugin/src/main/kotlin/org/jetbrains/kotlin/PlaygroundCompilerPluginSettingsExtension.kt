@@ -5,10 +5,14 @@ import org.gradle.api.provider.Property
 import javax.inject.Inject
 
 abstract class PlaygroundCompilerPluginSettingsExtension @Inject constructor(objects: ObjectFactory) {
-    val enabled: Property<Boolean> =
-        objects.property(Boolean::class.javaObjectType).convention(true)
+    val enabledCallsTracing: Property<Boolean> =
+        objects.property(Boolean::class.javaObjectType).convention(false)
 
-    val excludedFqns = objects.listProperty(String::class.java).convention(emptyList())
-    val excludedFiles = objects.listProperty(String::class.java).convention(emptyList())
+    val excludedCallsFqns = objects.listProperty(String::class.java).convention(emptyList())
+    val excludedCallsFiles = objects.listProperty(String::class.java).convention(emptyList())
+
+    val enabledClassTracing: Property<Boolean> =
+        objects.property(Boolean::class.javaObjectType).convention(false)
+
     val traceClassesFqns = objects.listProperty(String::class.java).convention(emptyList())
 }

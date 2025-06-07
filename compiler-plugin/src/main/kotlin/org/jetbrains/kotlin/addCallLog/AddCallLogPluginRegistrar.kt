@@ -14,6 +14,9 @@ class AddCallLogPluginRegistrar : CompilerPluginRegistrar() {
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
 
+        val enabledCallsTracing = configuration.get(AddCallLogCommandLineProcessor.ENABLE_CALLS_TRACING.key) ?: false
+        val enabledClassTracing = configuration.get(AddCallLogCommandLineProcessor.ENABLE_CLASS_TRACING.key) ?: false
+
         val rawFqns = configuration.get(AddCallLogCommandLineProcessor.EXCLUDED_FQN.key) ?: ""
         val fqns = rawFqns.split("|")
 
@@ -23,8 +26,16 @@ class AddCallLogPluginRegistrar : CompilerPluginRegistrar() {
         val rawTracesClassesFqns = configuration.get(AddCallLogCommandLineProcessor.TRACE_CLASS.key) ?: ""
         val tracesClassesFqns = rawTracesClassesFqns.split("|")
 
+        //throw Error(">")
+
         IrGenerationExtension.registerExtension(
-            AddCallLogPluginExtension(fqns, files, tracesClassesFqns)
+            AddCallLogPluginExtension(
+                enabledCallsTracing,
+                enabledClassTracing,
+                fqns,
+                files,
+                tracesClassesFqns
+            )
         )
     }
 }

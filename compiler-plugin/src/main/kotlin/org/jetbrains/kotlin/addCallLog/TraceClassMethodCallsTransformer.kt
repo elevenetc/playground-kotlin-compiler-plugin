@@ -17,11 +17,11 @@ import org.jetbrains.kotlin.utils.*
 
 class TraceClassMethodCallsTransformer(
     private val traceClassFqns: List<String>,
-    private val context: IrPluginContext
+    private val pluginContext: IrPluginContext
 ) : IrElementTransformerVoidWithContext() {
 
     companion object {
-        const val CLASS_NAME = "org.jetbrains.kotlin.ClassMethodsCallsTracer"
+        const val CLASS_NAME = "org.jetbrains.kotlin.InstanceLogger"
         const val STATIC_PROPERTY = "instance"
         const val START_METHOD = "start"
         const val END_METHOD = "end"
@@ -35,25 +35,25 @@ class TraceClassMethodCallsTransformer(
 
     private fun wrapDeclarationWithLogs(declaration: IrFunction) {
 
-        val functionFqn = declaration.safeIrFunctionFqn()
+        val functionName = declaration.name.toString()
         val containingClassFqn = declaration.containingIrClassOrNull()?.fqNameForIrSerialization?.toString()
 
         if (containingClassFqn == null) return
         if (!traceClassFqns.contains(containingClassFqn)) return
-        if (functionFqn.contains(CLASS_NAME)) return
 
-        val start = context.referenceCompanionPropertyFunction(CLASS_NAME, STATIC_PROPERTY, START_METHOD)
-        val end = context.referenceCompanionPropertyFunction(CLASS_NAME, STATIC_PROPERTY, END_METHOD)
+        val start = pluginContext.referenceCompanionPropertyFunction(CLASS_NAME, STATIC_PROPERTY, START_METHOD)
+        val end = pluginContext.referenceCompanionPropertyFunction(CLASS_NAME, STATIC_PROPERTY, END_METHOD)
 
-        context.withDeclarationIrBuilder(declaration) {
+
+
+        pluginContext.withDeclarationIrBuilder(declaration) {
 
             val builder = this as IrBuilder
 
-
             val startArgs = listOfNotNull(
                 builder.irString(containingClassFqn),
-                builder.irString(functionFqn),
-                irStringStringMap(declaration.getParametersMap())
+                builder.irString(functionName),
+                irStringStringMap(getParametersMap(declaration, pluginContext), pluginContext)
             )
 
             val endArgs = mutableListOf<IrExpression>()
@@ -75,9 +75,10 @@ class TraceClassMethodCallsTransformer(
                     }
                 }
                 val returnTransformer = PreReturnIrCallTransformer(
-                    this@TraceClassMethodCallsTransformer.context,
+                    this@TraceClassMethodCallsTransformer.pluginContext,
                     declaration,
-                    end.copy(arguments = endArgs)
+                    end.copy(arguments = endArgs),
+                    true
                 )
                 +((irBlock as IrExpression).accept(returnTransformer, null) as IrExpression)
             }
