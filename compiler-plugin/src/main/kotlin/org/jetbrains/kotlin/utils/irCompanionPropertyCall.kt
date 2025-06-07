@@ -63,7 +63,10 @@ private fun IrBuilder.irCall(callee: IrSimpleFunctionSymbol): IrCall {
     val typeArgumentsCount = callee.owner.typeParameters.size
     val origin = null
     return IrCallImpl(
-        startOffset, endOffset, type, callee,
+        startOffset = startOffset,
+        endOffset = endOffset,
+        type = type,
+        symbol = callee,
         typeArgumentsCount = typeArgumentsCount,
         origin = origin
     )
