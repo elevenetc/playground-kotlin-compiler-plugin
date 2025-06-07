@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.typeOrNull
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-@OptIn(FirIncompatiblePluginAPI::class)
+@OptIn(FirIncompatiblePluginAPI::class, UnsafeDuringIrConstructionAPI::class)
 fun IrBuilderWithScope.irStringStringMap(
     values: Map<String, IrExpression>,
     pluginContext: IrPluginContext
