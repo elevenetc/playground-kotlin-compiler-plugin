@@ -271,7 +271,7 @@ abstract class AbstractKotlinCompilation<A : CommonCompilerArguments> internal c
                     if (
                         compilerPluginRegistrars.isNotEmpty() ||
                         commandLineProcessors.isNotEmpty()
-                    ) arrayOf(getResourcesPath())
+                    ) arrayOf(getRegistrarImplementationClasspath())
                     else emptyArray()
         }
 
@@ -284,31 +284,37 @@ abstract class AbstractKotlinCompilation<A : CommonCompilerArguments> internal c
         )
     }
 
-    protected fun getResourcesPath(): String {
-        val p = this::class.java.classLoader.getResources(resourceName)
-            .asSequence()
+    protected fun getRegistrarImplementationClasspath(): String {
+        val classLoader = this::class.java.classLoader
+        val resources = classLoader.getResources(compilerPluginRegistrarPath).toList()
+        if (resources.isEmpty()) {
+            throw AssertionError("X")
+        }
+        val p = resources
             .mapNotNull { url -> urlToResourcePath(url) }
             .find { resourcesPath ->
                 val implementations = ServiceLoaderLite.findImplementations(
                     CompilerPluginRegistrar::class.java,
                     listOf(resourcesPath.toFile())
                 )
-                val i = implementations.any {
-                    implementation -> implementation == MainComponentRegistrar::class.java.name
-                    //implementation -> implementation == "com.tschuchort.compiletesting.MainComponentRegistrar"
-                }
-                i
+                implementations.isNotEmpty()
+//                val registrarImplementation = implementations.any { implementation ->
+//                    implementation == MainComponentRegistrar::class.java.name
+//                }
+//                registrarImplementation
             }?.toString()
-        if (p == null) throw AssertionError("Could not get path to `${CompilerPluginRegistrar::class.java}` service from META-INF")
+        if (p == null) throw AssertionError("Could not get path to `${CompilerPluginRegistrar::class.java}` service from META-INF at `$compilerPluginRegistrarPath`")
         else return p
     }
+
+    //implementation -> implementation == "com.tschuchort.compiletesting.MainComponentRegistrar"
 
     /** Maps a URL resource for a class from a JAR or file to an absolute Path on disk  */
     internal fun urlToResourcePath(url: URL): Path? {
         val uri = url.toURI()
         val uriPath = when (uri.scheme) {
-            "jar" -> uri.rawSchemeSpecificPart.removeSuffix("!/$resourceName")
-            "file" -> uri.toString().removeSuffix("/$resourceName")
+            "jar" -> uri.rawSchemeSpecificPart.removeSuffix("!/$compilerPluginRegistrarPath")
+            "file" -> uri.toString().removeSuffix("/$compilerPluginRegistrarPath")
             else -> return null
         }
         return Paths.get(URI.create(uriPath)).toAbsolutePath()
@@ -377,13 +383,15 @@ abstract class AbstractKotlinCompilation<A : CommonCompilerArguments> internal c
         internalMessageStream.println("warning: $s")
     }
 
-    protected fun error(s: String) {
-        internalMessageStream.println("error: $s")
-    }
+//    protected fun error(s: String) {
+//        internalMessageStream.println("error: $s")
+//    }
 
     internal fun createMessageCollectorAccess(stepName: String): MessageCollector = createMessageCollector(stepName)
 
-    private val resourceName = "META-INF/services/org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar"
+    //    private val resourceName = "META-INF/services"
+    private val compilerPluginRegistrarPath =
+        "META-INF/services/org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar"
     //private val resourceName = "META-INF/services/org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar"
 }
 

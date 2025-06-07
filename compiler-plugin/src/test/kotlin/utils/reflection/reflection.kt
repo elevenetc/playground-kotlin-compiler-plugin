@@ -18,12 +18,21 @@ fun Any.call(methodName: String): Any? {
     return method.callBy(mapOf(method.instanceParameter!! to this))
 }
 
-fun KClass<*>.newInstance(): Any {
-    return primaryConstructor?.call() ?: newInstance()
+fun KClass<*>.newAnyInstance(): Any {
+    return newInstance()
 }
 
-fun KClass<*>.getCompanionProperty(name: String): Any {
+@Suppress("UNCHECKED_CAST")
+fun <T> KClass<*>.newInstance(): T {
+    return (primaryConstructor?.call() ?: newAnyInstance()) as T
+}
+
+fun <T> KClass<*>.getCompanionProperty(name: String): T {
     return (companionObjectInstance ?: error("No companion")).let { companion ->
         companion.get(name) ?: error("Companion property `$name` is null")
     }
+}
+
+fun KClass<*>.getAnyCompanionProperty(name: String): Any {
+    return getCompanionProperty(name)
 }

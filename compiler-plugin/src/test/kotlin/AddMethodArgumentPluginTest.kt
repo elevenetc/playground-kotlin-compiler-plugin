@@ -4,7 +4,10 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import utils.*
+import utils.assertSuccess
+import utils.buildSourceInfo
+import utils.compile
+import utils.decompileClassAndTrim
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCompilerApi::class)
@@ -93,14 +96,14 @@ class AddMethodArgumentPluginTest {
         val result = compile(
             sourceInfo = buildSourceInfo(tempDir, source),
             registrar = AddMethodArgumentPluginRegistrar(),
-            processor = AddMethodArgumentCommandLineProcessor(),
-            options = {
-                listOf(
-                    option(AddMethodArgumentCommandLineProcessor.METHOD_NAME_OPTION, "bar"),
-                    option(AddMethodArgumentCommandLineProcessor.ARGUMENT_NAME_OPTION, argumentName),
-                    option(AddMethodArgumentCommandLineProcessor.ARGUMENT_TYPE_OPTION, fqnType),
+
+            processors = mapOf(
+                AddMethodArgumentCommandLineProcessor() to listOf(
+                    AddMethodArgumentCommandLineProcessor.METHOD_NAME_OPTION to "bar",
+                    AddMethodArgumentCommandLineProcessor.ARGUMENT_NAME_OPTION to argumentName,
+                    AddMethodArgumentCommandLineProcessor.ARGUMENT_TYPE_OPTION to fqnType
                 )
-            }
+            )
         )
 
         result.assertSuccess()

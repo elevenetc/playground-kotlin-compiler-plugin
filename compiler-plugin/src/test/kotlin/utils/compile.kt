@@ -2,12 +2,12 @@ package utils
 
 import com.tschuchort.compiletesting.JvmCompilationResult
 import com.tschuchort.compiletesting.KotlinCompilation
-import com.tschuchort.compiletesting.PluginOption
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
@@ -19,16 +19,14 @@ import java.io.File
 internal fun compile(
     sourceInfo: SourceInfo,
     registrar: CompilerPluginRegistrar? = null,
-    processor: CommandLineProcessor? = null,
     classpath: List<File> = emptyList(),
-    options: CommandLineProcessor.() -> List<PluginOption> = { emptyList() }
+    processors: Map<CommandLineProcessor, List<Pair<CliOption, Any>>>? = null
 ): JvmCompilationResult {
     return prepareCompilation(
         sourceInfo,
         classpath,
         registrar,
-        processor,
-        options
+        processors
     ).compile()
 }
 
@@ -65,8 +63,7 @@ internal fun prepareCompilation(
     sourceInfo: SourceInfo,
     classpaths: List<File> = emptyList(),
     registrar: CompilerPluginRegistrar? = null,
-    processor: CommandLineProcessor? = null,
-    options: CommandLineProcessor.() -> List<PluginOption> = { emptyList() }
+    processors: Map<CommandLineProcessor, List<Pair<CliOption, Any>>>? = null
 ): KotlinCompilation {
     return KotlinCompilation().apply {
         workingDir = sourceInfo.tempDir.root
@@ -75,9 +72,12 @@ internal fun prepareCompilation(
         sources = sourceInfo.sourceFiles.toList()
         verbose = true
         this.classpaths = classpaths
-        if (processor != null) {
-            commandLineProcessors = listOf(processor)
-            pluginOptions = options.invoke(processor)
-        }
+
+        commandLineProcessors = processors?.keys?.toList() ?: emptyList()
+
+        pluginOptions = processors?.map { procAndOpts ->
+            val proc = procAndOpts.key
+            procAndOpts.value.map { cliOption -> proc.option(cliOption.first, cliOption.second) }
+        }?.flatten() ?: emptyList()
     }
 }

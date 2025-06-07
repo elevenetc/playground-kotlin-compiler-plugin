@@ -4,7 +4,10 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import utils.*
+import utils.assertSuccess
+import utils.buildSourceInfo
+import utils.compile
+import utils.decompileClassAndTrim
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCompilerApi::class)
@@ -63,14 +66,14 @@ class AddPropertyPluginTest {
         val result = compile(
             sourceInfo = buildSourceInfo(tempDir, source),
             registrar = AddPropertyPluginRegistrar(),
-            processor = AddPropertyCommandLineProcessor(),
-            options = {
-                listOf(
-                    option(AddPropertyCommandLineProcessor.PROPERTY_NAME_OPTION, propertyName),
-                    option(AddPropertyCommandLineProcessor.PROPERTY_TYPE_OPTION, propertyFqnType),
-                    option(AddPropertyCommandLineProcessor.PROPERTY_VALUE_OPTION, propertyValue)
+
+            processors = mapOf(
+                AddPropertyCommandLineProcessor() to listOf(
+                    AddPropertyCommandLineProcessor.PROPERTY_NAME_OPTION to propertyName,
+                    AddPropertyCommandLineProcessor.PROPERTY_TYPE_OPTION to propertyFqnType,
+                    AddPropertyCommandLineProcessor.PROPERTY_VALUE_OPTION to propertyValue
                 )
-            }
+            )
         )
 
         result.assertSuccess()

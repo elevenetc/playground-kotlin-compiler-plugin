@@ -4,7 +4,10 @@ import org.jetbrains.kotlin.overrideMethod.OverrideMethodPluginRegistrar
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import utils.*
+import utils.assertSuccess
+import utils.buildSourceInfo
+import utils.compile
+import utils.decompileClassAndTrim
 import kotlin.test.assertEquals
 
 
@@ -44,8 +47,7 @@ class OverrideMethodPluginTest {
         val result = compile(
             sourceInfo = buildSourceInfo(tempDir, source),
             registrar = OverrideMethodPluginRegistrar(),
-            processor = OverrideMethodCommandLineProcessor(),
-            options = { emptyList() }
+            processors = mapOf(OverrideMethodCommandLineProcessor() to emptyList())
         )
 
         result.assertSuccess()
@@ -81,8 +83,7 @@ class OverrideMethodPluginTest {
         val result = compile(
             sourceInfo = buildSourceInfo(tempDir, source),
             registrar = OverrideMethodPluginRegistrar(),
-            processor = OverrideMethodCommandLineProcessor(),
-            options = { emptyList() }
+            processors = mapOf(OverrideMethodCommandLineProcessor() to emptyList())
         )
 
         result.assertSuccess()

@@ -1,5 +1,8 @@
 import org.jetbrains.kotlin.CallLogger
 import org.jetbrains.kotlin.addCallLog.AddCallLogCommandLineProcessor
+import org.jetbrains.kotlin.addCallLog.AddCallLogCommandLineProcessor.Companion.ENABLE_CALLS_TRACING
+import org.jetbrains.kotlin.addCallLog.AddCallLogCommandLineProcessor.Companion.EXCLUDED_FILES
+import org.jetbrains.kotlin.addCallLog.AddCallLogCommandLineProcessor.Companion.EXCLUDED_FQN
 import org.jetbrains.kotlin.addCallLog.AddCallLogPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.junit.Before
@@ -8,7 +11,7 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import utils.*
 import utils.reflection.call
-import utils.reflection.newInstance
+import utils.reflection.newAnyInstance
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -32,7 +35,7 @@ class AddCallLogPluginTest {
             fun fooReturnUnit(): Unit {
                 println("1")
                 println("2")
-                return Unit
+                return
             }
             
             fun fooReturnNothing() {
@@ -44,7 +47,11 @@ class AddCallLogPluginTest {
         val result = compile(
             sourceInfo = buildSourceInfo(tempDir, source),
             registrar = AddCallLogPluginRegistrar(),
-            processor = AddCallLogCommandLineProcessor()
+            processors = mapOf(
+                AddCallLogCommandLineProcessor() to listOf(
+                    ENABLE_CALLS_TRACING.option to true
+                )
+            )
         ).also { result -> result.assertSuccess() }
 
         val expected = """
@@ -79,7 +86,11 @@ class AddCallLogPluginTest {
         val result = compile(
             sourceInfo = buildSourceInfo(tempDir, source),
             registrar = AddCallLogPluginRegistrar(),
-            processor = AddCallLogCommandLineProcessor()
+            processors = mapOf(
+                AddCallLogCommandLineProcessor() to listOf(
+                    ENABLE_CALLS_TRACING.option to true
+                )
+            )
         ).also { result -> result.assertSuccess() }
 
         val expected = """
@@ -105,7 +116,12 @@ class AddCallLogPluginTest {
 
         val result = compile(
             sourceInfo = buildSourceInfo(tempDir, source),
-            registrar = AddCallLogPluginRegistrar()
+            registrar = AddCallLogPluginRegistrar(),
+            processors = mapOf(
+                AddCallLogCommandLineProcessor() to listOf(
+                    ENABLE_CALLS_TRACING.option to true
+                )
+            )
         ).also { result -> result.assertSuccess() }
 
         val expected = """
@@ -119,7 +135,7 @@ class AddCallLogPluginTest {
         """.trimIndent()
 
         val actual = result.decompileClassAndTrim("SourceKt.class")
-        assertEquals(expected, actual)
+        assertEqualsCode(expected, actual)
     }
 
     @Test
@@ -129,27 +145,38 @@ class AddCallLogPluginTest {
 
             class Foo {
                 @IgnoreCallLog
-                fun test() {
-                    println("test")
+                fun shouldBeIgnored() {
+                    println("should be ignored")
                 }
 
                 fun notIgnored() {
                     println("not ignored")
                 }
             }
+            
+            @IgnoreCallLog
+            class Bar {            
+                fun shouldBeIgnored() { 
+                }
+            }
+            
         """.trimIndent()
 
         val result = compile(
             sourceInfo = buildSourceInfo(tempDir, source),
             registrar = AddCallLogPluginRegistrar(),
-            processor = AddCallLogCommandLineProcessor()
+            processors = mapOf(
+                AddCallLogCommandLineProcessor() to listOf(
+                    ENABLE_CALLS_TRACING.option to true
+                )
+            )
         ).also { result -> result.assertSuccess() }
 
-        val expected = """
+        val expectedFoo = """
             public final class Foo {
                 @IgnoreCallLog
-                public final void test() {
-                    System.out.println((Object)"test");
+                public final void shouldBeIgnored() {
+                    System.out.println((Object)"should be ignored");
                 }
                 public final void notIgnored() {
                     Uuid uuid = CallLogger.Companion.getInstance().start("Foo.notIgnored");
@@ -159,7 +186,16 @@ class AddCallLogPluginTest {
             }
         """.trimIndent()
 
-        assertEqualsCode(expected, result.decompileClassAndTrim("Foo.class"))
+        val expectedBar = """
+            @IgnoreCallLog
+            public final class Bar {
+                public final void shouldBeIgnored() {
+                }
+            }
+        """.trimIndent()
+
+        assertEqualsCode(expectedFoo, result.decompileClassAndTrim("Foo.class"))
+        assertEqualsCode(expectedBar, result.decompileClassAndTrim("Bar.class"))
     }
 
     @Test
@@ -178,12 +214,13 @@ class AddCallLogPluginTest {
         val result = compile(
             sourceInfo = buildSourceInfo(tempDir, source),
             registrar = AddCallLogPluginRegistrar(),
-            processor = AddCallLogCommandLineProcessor(),
-            options = {
-                listOf(
-                    option(AddCallLogCommandLineProcessor.EXCLUDED_FQN.option, "Foo.bar0")
+
+            processors = mapOf(
+                AddCallLogCommandLineProcessor() to listOf(
+                    ENABLE_CALLS_TRACING.option to true,
+                    EXCLUDED_FQN.option to "Foo.bar0"
                 )
-            }
+            )
         ).also { result -> result.assertSuccess() }
 
         val expected = """
@@ -219,12 +256,13 @@ class AddCallLogPluginTest {
         val result = compile(
             sourceInfo = buildSourceInfo(tempDir, source),
             registrar = AddCallLogPluginRegistrar(),
-            processor = AddCallLogCommandLineProcessor(),
-            options = {
-                listOf(
-                    option(AddCallLogCommandLineProcessor.EXCLUDED_FQN.option, "Foo.bar*")
+
+            processors = mapOf(
+                AddCallLogCommandLineProcessor() to listOf(
+                    ENABLE_CALLS_TRACING.option to true,
+                    EXCLUDED_FQN.option to "Foo.bar*"
                 )
-            }
+            )
         ).also { result -> result.assertSuccess() }
 
         val expected = """
@@ -267,13 +305,14 @@ class AddCallLogPluginTest {
         val result = compile(
             sourceInfo = buildSourceInfo(tempDir, source),
             registrar = AddCallLogPluginRegistrar(),
-            processor = AddCallLogCommandLineProcessor(),
-            options = {
-                listOf(
-                    option(AddCallLogCommandLineProcessor.EXCLUDED_FQN.option, "Foo.test*"),
-                    option(AddCallLogCommandLineProcessor.EXCLUDED_FQN.option, "Bar.*")
+
+            processors = mapOf(
+                AddCallLogCommandLineProcessor() to listOf(
+                    ENABLE_CALLS_TRACING.option to true,
+                    EXCLUDED_FQN.option to "Foo.test*",
+                    EXCLUDED_FQN.option to "Bar.*"
                 )
-            }
+            )
         ).also { result -> result.assertSuccess() }
 
         val expected = """
@@ -317,7 +356,12 @@ class AddCallLogPluginTest {
 
         val result = compile(
             sourceInfo = buildSourceInfo(tempDir, source),
-            registrar = AddCallLogPluginRegistrar()
+            registrar = AddCallLogPluginRegistrar(),
+            processors = mapOf(
+                AddCallLogCommandLineProcessor() to listOf(
+                    ENABLE_CALLS_TRACING.option to true
+                )
+            )
         ).also { result -> result.assertSuccess() }
 
         val expected = """
@@ -356,7 +400,12 @@ class AddCallLogPluginTest {
 
         val result = compile(
             sourceInfo = buildSourceInfo(tempDir, source),
-            registrar = AddCallLogPluginRegistrar()
+            registrar = AddCallLogPluginRegistrar(),
+            processors = mapOf(
+                AddCallLogCommandLineProcessor() to listOf(
+                    ENABLE_CALLS_TRACING.option to true
+                )
+            )
         ).also { result -> result.assertSuccess() }
 
         val expected = """
@@ -405,7 +454,12 @@ class AddCallLogPluginTest {
         val result = compile(
             sourceInfo = buildSourceInfo(tempDir, fooSource),
             registrar = AddCallLogPluginRegistrar(),
-            classpath = listOf(File(tempDir.root, "classes"))
+            classpath = listOf(File(tempDir.root, "classes")),
+            processors = mapOf(
+                AddCallLogCommandLineProcessor() to listOf(
+                    ENABLE_CALLS_TRACING.option to true
+                )
+            )
         ).also { result -> result.assertSuccess() }
 
         assertEquals(
@@ -422,7 +476,7 @@ class AddCallLogPluginTest {
         )
 
         val loader = result.classLoader
-        val foo = loader.loadClass("Foo").kotlin.newInstance()
+        val foo = loader.loadClass("Foo").kotlin.newAnyInstance()
         val threads = CallLogger.instance.threads
 
         threads.assertEmpty()
@@ -463,7 +517,11 @@ class AddCallLogPluginTest {
         val result = compile(
             sourceInfo = buildSourceInfo(tempDir, source),
             registrar = AddCallLogPluginRegistrar(),
-            processor = AddCallLogCommandLineProcessor()
+            processors = mapOf(
+                AddCallLogCommandLineProcessor() to listOf(
+                    ENABLE_CALLS_TRACING.option to true
+                )
+            )
         ).also { result -> result.assertSuccess() }
 
         val actual = result.decompileClassAndTrim("SourceKt.class")
@@ -503,12 +561,13 @@ class AddCallLogPluginTest {
         val result = compile(
             sourceInfo = buildSourceInfo(tempDir, source, fileName),
             registrar = AddCallLogPluginRegistrar(),
-            processor = AddCallLogCommandLineProcessor(),
-            options = {
-                listOf(
-                    option(AddCallLogCommandLineProcessor.EXCLUDED_FILES.option, fileName)
+
+            processors = mapOf(
+                AddCallLogCommandLineProcessor() to listOf(
+                    ENABLE_CALLS_TRACING.option to true,
+                    EXCLUDED_FILES.option to fileName
                 )
-            }
+            )
         ).also { result -> result.assertSuccess() }
 
         val expected = """

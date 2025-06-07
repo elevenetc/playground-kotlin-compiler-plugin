@@ -1,10 +1,14 @@
 import org.jetbrains.kotlin.addPrint.AddPrintCommandLineProcessor
+import org.jetbrains.kotlin.addPrint.AddPrintCommandLineProcessor.Companion.STRING_VALUE_OPTION
 import org.jetbrains.kotlin.addPrint.AddPrintPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import utils.*
+import utils.assertSuccess
+import utils.buildSourceInfo
+import utils.compile
+import utils.decompileClassAndTrim
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCompilerApi::class)
@@ -44,10 +48,12 @@ class AddPrintPluginTest {
         val result = compile(
             sourceInfo = buildSourceInfo(tempDir, source),
             registrar = AddPrintPluginRegistrar(),
-            processor = AddPrintCommandLineProcessor(),
-            options = {
-                listOf(option(AddPrintCommandLineProcessor.STRING_VALUE_OPTION, stringValue))
-            },
+
+            processors = mapOf(
+                AddPrintCommandLineProcessor() to listOf(
+                    STRING_VALUE_OPTION to stringValue
+                )
+            )
         )
 
         result.assertSuccess()

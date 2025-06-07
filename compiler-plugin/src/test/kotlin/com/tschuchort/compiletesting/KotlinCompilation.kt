@@ -387,7 +387,8 @@ class KotlinCompilation : AbstractKotlinCompilation<K2JVMCompilerArguments>() {
         val k2JvmArgs =
             commonK2JVMArgs().also {
                 it.freeArgs = sourcePaths
-                it.pluginClasspaths = (it.pluginClasspaths ?: emptyArray()) + arrayOf(getResourcesPath())
+                it.pluginClasspaths =
+                    (it.pluginClasspaths ?: emptyArray()) + arrayOf(getRegistrarImplementationClasspath())
                 if (kotlinSources.isEmpty()) {
                     it.allowNoSourceFiles = true
                 }

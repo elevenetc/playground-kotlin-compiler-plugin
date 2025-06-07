@@ -1,4 +1,5 @@
-import org.jetbrains.kotlin.addDependencyCallToMethod.AddDependencyCallToMethodCommandLineProcessor
+package execution
+
 import org.jetbrains.kotlin.addDependencyCallToMethod.AddDependencyCallToMethodPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.junit.Rule
@@ -10,8 +11,8 @@ import utils.compile
 import utils.decompileClassAndTrim
 import utils.reflection.call
 import utils.reflection.get
-import utils.reflection.getCompanionProperty
-import utils.reflection.newInstance
+import utils.reflection.getAnyCompanionProperty
+import utils.reflection.newAnyInstance
 import java.io.File
 import kotlin.test.assertEquals
 
@@ -54,7 +55,6 @@ class AddDependencyCallToMethodPluginTest {
         val result = compile(
             sourceInfo = buildSourceInfo(tempDir, fooSource),
             registrar = AddDependencyCallToMethodPluginRegistrar(),
-            processor = AddDependencyCallToMethodCommandLineProcessor(),
             classpath = listOf(File(tempDir.root, "classes"))
         ).also { result -> result.assertSuccess() }
 
@@ -65,15 +65,14 @@ class AddDependencyCallToMethodPluginTest {
         )
 
         val loader = result.classLoader
-        val foo = loader.loadClass("Foo").kotlin.newInstance()
-        val invValueHolder = loader.loadClass("IntValueHolder").kotlin.getCompanionProperty("instance")
+        val foo = loader.loadClass("Foo").kotlin.newAnyInstance()
+        val invValueHolder = loader.loadClass("IntValueHolder").kotlin.getAnyCompanionProperty("instance")
 
         assertEquals(0, invValueHolder.get("value"))
         foo.call("bar")
         assertEquals(1, invValueHolder.get("value"))
         foo.call("bar")
         assertEquals(2, invValueHolder.get("value"))
-
 
         val expected = """
             public final class Foo {
