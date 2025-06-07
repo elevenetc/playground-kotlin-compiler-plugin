@@ -22,9 +22,9 @@ kotlin {
 }
 
 playgroundCompilerPluginSettings {
-    enabled = true
-    excludedFqns = listOf(
-        "*<anonymous>"
+    enabledClassTracing = true
+    enabledCallsTracing = true
+    traceClassesFqns = listOf(
+        "ViewModel", "Foo"
     )
-    excludedFiles = listOf("Foo.kt")
 }
