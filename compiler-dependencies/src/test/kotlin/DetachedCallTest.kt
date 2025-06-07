@@ -14,6 +14,6 @@ class DetachedCallTest {
         CallLogger.instance.end(CallLogger.instance.start("a"))
         CallLogger.instance.end(CallLogger.instance.start("b"))
 
-        println(CallLogger.instance.dumpToString())
+        println(CallLogger.instance.dump())
     }
 }
