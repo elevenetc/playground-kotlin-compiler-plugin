@@ -17,7 +17,7 @@ dependencies {
     compileOnly("com.google.auto.service:auto-service-annotations:1.1.1")
     testCompileOnly("com.google.auto.service:auto-service-annotations:1.1.1")
 
-    //kapt("com.google.auto.service:auto-service:1.1.1")
+    kapt("com.google.auto.service:auto-service:1.1.1")
 
     implementation("org.jetbrains.kotlin:compiler-dependencies:0.0.1")
 
