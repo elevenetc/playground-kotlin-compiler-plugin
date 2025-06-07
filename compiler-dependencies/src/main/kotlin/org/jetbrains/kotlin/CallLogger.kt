@@ -12,7 +12,7 @@ class CallLogger {
 
     init {
         Runtime.getRuntime().addShutdownHook(Thread {
-            storeDump(dumpToString())
+            storeDump(dump(), "traces", "trace")
         })
     }
 
@@ -49,8 +49,8 @@ class CallLogger {
         if (enableDump) LoggerDumper.instance.dump(this)
     }
 
-    fun dumpToString(): String {
-        return LoggerDumper.instance.dumpToString(this)
+    fun dump(): String {
+        return LoggerDumper.instance.dumpString(this)
     }
 
     private fun getCurrentThreadContainer(): ThreadContainer {

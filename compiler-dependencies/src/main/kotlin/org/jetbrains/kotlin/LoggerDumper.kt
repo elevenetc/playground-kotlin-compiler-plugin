@@ -7,6 +7,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
 import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.toJavaUuid
 
 class LoggerDumper {
 
@@ -18,7 +19,7 @@ class LoggerDumper {
         storeDump(createDump(logger))
     }
 
-    fun dumpToString(logger: CallLogger): String {
+    fun dumpString(logger: CallLogger): String {
         val dump = createDump(logger)
         return json.encodeToString(dump)
     }
@@ -32,7 +33,15 @@ class LoggerDumper {
     private fun createDump(logger: CallLogger): DumpLog {
 
         val history =
-            logger.history.map { DumpLog.HistoryItem(it.id.toString(), it.start, it.end, it.thread.name, it.fqn) }
+            logger.history.map {
+                DumpLog.HistoryItem(
+                    it.id.toJavaUuid().toString(),
+                    it.start,
+                    it.end,
+                    it.thread.name,
+                    it.fqn
+                )
+            }
 
         val roots = logger.threads.map {
             val threadContainer = it.value
@@ -61,11 +70,11 @@ private fun CallLogger.Call.toTreeNode(): DumpLog.TreeNode {
     val children = this.children.map {
         it.toTreeNode()
     }
-    return DumpLog.TreeNode(this.id.toString(), this.start, this.end, this.fqn, this.thread.id, children)
+    return DumpLog.TreeNode(this.id.toJavaUuid().toString(), this.start, this.end, this.fqn, this.thread.id, children)
 }
 
-private const val filePath = "build/generated/logger-dump"
-private const val fileName = "log.json"
+private const val filePath = "build/generated/trace-dump"
+private const val fileName = "trace.json"
 
 @Serializable
 data class DumpLog(

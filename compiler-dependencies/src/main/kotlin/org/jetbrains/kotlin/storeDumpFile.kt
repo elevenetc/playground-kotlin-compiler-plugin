@@ -4,12 +4,14 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-private const val dumpsDir = "build/call-logs"
+private const val dumpsDir = "build/kcrif"
 
-internal fun storeDump(dump: String) {
+internal fun storeDump(dump: String, subDir: String, filePrefix: String) {
     //TODO: replace with multiplatform implementation
-    File(dumpsDir).mkdirs()
-    File("$dumpsDir/call-logger-${getCurrentReadableTime()}.json").writeText(dump)
+
+    val dir = "$dumpsDir/$subDir"
+    File(dir).mkdirs()
+    File("$dir/$filePrefix-${getCurrentReadableTime()}.json").writeText(dump)
 }
 
 private fun getCurrentReadableTime(): String {
