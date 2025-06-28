@@ -12,11 +12,14 @@ import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
+/**
+ * When [addReturnValueToArgs] is true, then return value is passed to [preReturnCall] as an argument
+ */
 class PreReturnIrCallTransformer(
     private val pluginContext: IrPluginContext,
     private val function: IrFunction,
-    private val irCall: IrCompanionPropertyFunctionCall,
-    private val addReturnToArgs: Boolean = false,
+    private val preReturnCall: IrCompanionPropertyFunctionCall,
+    private val addReturnValueToArgs: Boolean = false,
 ) : IrTransformer<Nothing?>() {
 
     override fun visitReturn(
@@ -29,26 +32,16 @@ class PreReturnIrCallTransformer(
         return DeclarationIrBuilder(pluginContext, function.symbol).irBlock {
 
             val returnType = expression.value.type
-            if (addReturnToArgs && !returnType.isUnit()) {
+            if (addReturnValueToArgs && !returnType.isUnit()) {
                 val tmpVal = irTemporary(expression.value, nameHint = "retVal")
                 val toStringCall = callToStringOn(irGet(tmpVal), pluginContext)
-                +irCompanionPropertyCall(irCall.copy(arguments = irCall.arguments + toStringCall))
+                +irCompanionPropertyCall(preReturnCall.copy(arguments = preReturnCall.arguments + toStringCall))
                 +irReturn(irGet(tmpVal))
             } else {
-                +irCompanionPropertyCall(irCall)
-                +expression
+                val tmpVal = irTemporary(expression.value, nameHint = "retVal")
+                +irCompanionPropertyCall(preReturnCall)
+                +irReturn(irGet(tmpVal))
             }
         }
     }
 }
-
-
-//                val irReturnGet = irGet(irTemporary(expression))
-//                val returnValue = callToStringOn(irReturnGet, pluginContext)
-//                +irCompanionPropertyCall(irCall.copy(arguments = irCall.arguments + returnValue))
-//                +irReturnGet
-
-//val tmpVal = irTemporary(expression, nameHint = "retVal")
-//val toStringCall = callToStringOn(irGet(tmpVal), pluginContext)
-//+irCompanionPropertyCall(irCall.copy(arguments = irCall.arguments + toStringCall))
-//+irReturn(irGet(tmpVal))

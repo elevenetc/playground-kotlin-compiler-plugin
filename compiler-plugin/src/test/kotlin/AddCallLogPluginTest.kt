@@ -30,6 +30,48 @@ class AddCallLogPluginTest {
     }
 
     @Test
+    fun `simple chain return value`() {
+        val source = """
+            fun foo(): Int {
+                return bar()
+            }
+            
+            fun bar(): Int {
+                return 42
+            }
+        """.trimIndent()
+
+        val result = compile(
+            sourceInfo = buildSourceInfo(tempDir, source),
+            registrar = AddCallLogPluginRegistrar(),
+            processors = mapOf(
+                AddCallLogCommandLineProcessor() to listOf(
+                    ENABLE_CALLS_TRACING.option to true
+                )
+            )
+        ).also { result -> result.assertSuccess() }
+
+        val expected = """
+            public final class SourceKt {
+                public static final int foo() {
+                    Uuid uuid = CallLogger.Companion.getInstance().start("foo");
+                    int n = SourceKt.bar();
+                    CallLogger.Companion.getInstance().end(uuid);
+                    return n;
+                }
+                public static final int bar() {
+                    Uuid uuid = CallLogger.Companion.getInstance().start("bar");
+                    CallLogger.Companion.getInstance().end(uuid);
+                    return 42;
+                }
+            }
+        """.trimIndent()
+
+        val actual = result.decompileClassAndTrim("SourceKt.class")
+        assertEqualsCode(expected, actual)
+    }
+
+    @Test
     fun `explicit and implicit return Unit types`() {
         val source = """
             fun fooReturnUnit(): Unit {
@@ -408,27 +450,29 @@ class AddCallLogPluginTest {
             )
         ).also { result -> result.assertSuccess() }
 
-        val expected = """
+        val expected = $$"""
             public final class SourceKt {
                 @NotNull
                 private static final Foo foo;
                 @NotNull
                 public static final Foo getFoo() {
                     Uuid uuid = CallLogger.Companion.getInstance().start("<get-foo>");
+                    Foo foo = SourceKt.foo;
                     CallLogger.Companion.getInstance().end(uuid);
                     return foo;
                 }
-                private static final Unit foo${'$'}lambda${'$'}1${'$'}lambda${'$'}0() {
+                private static final Unit foo$lambda$1$lambda$0() {
                     Uuid uuid = CallLogger.Companion.getInstance().start("foo.<anonymous>.<anonymous>");
+                    Unit unit = Unit.INSTANCE;
                     CallLogger.Companion.getInstance().end(uuid);
-                    return Unit.INSTANCE;
+                    return unit;
                 }
                 static {
                     Foo foo;
-                    Foo ${'$'}this${'$'}foo_u24lambda_u241 = foo = new Foo();
+                    Foo $this$foo_u24lambda_u241 = foo = new Foo();
                     boolean bl = false;
                     Uuid uuid = CallLogger.Companion.getInstance().start("foo.<anonymous>");
-                    ${'$'}this${'$'}foo_u24lambda_u241.bar(SourceKt::foo${'$'}lambda${'$'}1${'$'}lambda${'$'}0);
+                    $this$foo_u24lambda_u241.bar(SourceKt::foo$lambda$1$lambda$0);
                     CallLogger.Companion.getInstance().end(uuid);
                     SourceKt.foo = foo;
                 }
@@ -436,7 +480,7 @@ class AddCallLogPluginTest {
         """.trimIndent()
 
         val actual = result.decompileClassAndTrim("SourceKt.class")
-        assertEquals(expected, actual)
+        assertEqualsCode(expected, actual)
     }
 
     @Test
