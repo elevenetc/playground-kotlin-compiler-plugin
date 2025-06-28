@@ -5,11 +5,14 @@ package org.jetbrains.kotlin
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.jetbrains.kotlin.DumpLog.StackInstruction
+import org.jetbrains.kotlin.StackInstruction.Pop
+import org.jetbrains.kotlin.StackInstruction.Push
 import java.io.File
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.toJavaUuid
 
-class LoggerDumper {
+class TraceDumper {
 
     private val json = Json {
         prettyPrint = true
@@ -32,37 +35,36 @@ class LoggerDumper {
 
     private fun createDump(logger: CallLogger): DumpLog {
 
-        val history =
-            logger.history.map {
-                DumpLog.HistoryItem(
-                    it.id.toJavaUuid().toString(),
-                    it.start,
-                    it.end,
-                    it.thread.name,
-                    it.fqn
-                )
+        val stacks = logger.stacks.mapNotNull {
+            val instructions = it.value
+            val threadId = it.key
+            if (instructions.isEmpty()) {
+                null
+            } else {
+                threadId to instructions.map { inst ->
+                    when (inst) {
+                        is Push -> StackInstruction(inst.id, inst.start, inst.nodeId, "push")
+                        is Pop -> StackInstruction(inst.id, inst.start, null, "pop")
+                    }
+                }
             }
+        }.toMap()
 
         val roots = logger.threads.map {
             val threadContainer = it.value
             threadContainer.root?.toTreeNode() ?: error("Thread container doesn't have root")
         }.associateBy { it.threadId }
 
-        val threadsNames = logger.threads.map {
-            it.key to it.value.id.name
-        }.toMap()
-
         return DumpLog(
             timestamp = System.currentTimeMillis(),
-            history = history,
-            threadsRoots = roots,
-            threadsNamesMap = threadsNames
+            stacks = stacks,
+            roots = roots,
         )
     }
 
     companion object {
         @JvmStatic
-        val instance = LoggerDumper()
+        val instance = TraceDumper()
     }
 }
 
@@ -79,16 +81,19 @@ private const val fileName = "trace.json"
 @Serializable
 data class DumpLog(
     val timestamp: Long,
-    val history: List<HistoryItem>,
-    val threadsRoots: Map<Long, TreeNode>,
-    val threadsNamesMap: Map<Long, String>
+    val stacks: Map<Long, List<StackInstruction>>,
+    val roots: Map<Long, TreeNode>
 ) {
 
     @Serializable
-    data class HistoryItem(
-        val id: String, val start: Long, val end: Long,
-        val threadName: String,
-        val fqn: String
+    val version = 1
+
+    @Serializable
+    data class StackInstruction(
+        val id: String,
+        val start: Long,
+        val nodeId: String?,
+        val type: String
     )
 
     @Serializable

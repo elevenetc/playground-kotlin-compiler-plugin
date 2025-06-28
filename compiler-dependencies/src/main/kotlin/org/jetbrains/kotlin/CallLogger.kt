@@ -2,12 +2,13 @@ package org.jetbrains.kotlin
 
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
+import kotlin.uuid.toJavaUuid
 
 @OptIn(ExperimentalUuidApi::class)
 class CallLogger {
 
-    val threads = LinkedHashMap<Long, ThreadContainer>()
-    val history = mutableListOf<Call>()
+    val threads = LinkedHashMap<Long, ThreadContainer>() // thread-id -> thread container
+    val stacks = LinkedHashMap<Long, MutableList<StackInstruction>>() // thread-id -> stack instructions
     var enableDump = false
 
     init {
@@ -37,20 +38,22 @@ class CallLogger {
             t.currentCall?.children?.add(call)
         }
         call.parent = t.currentCall
-        updateCurrent(call)
+        updateCurrentCall(call)
+        addPushStackInstruction(call)
         return call.id
     }
 
     fun end(id: Uuid) {
         val t = getCurrentThreadContainer()
         t.calls[id] ?: error("Call $id does not exist")
-        t.calls[id]?.end = System.currentTimeMillis()
-        updateCurrent(t.currentCall?.parent)
-        if (enableDump) LoggerDumper.instance.dump(this)
+        t.calls[id]?.end = System.nanoTime()
+        updateCurrentCall(t.currentCall?.parent)
+        addPopStackInstruction()
+        if (enableDump) TraceDumper.instance.dump(this)
     }
 
     fun dump(): String {
-        return LoggerDumper.instance.dumpString(this)
+        return TraceDumper.instance.dumpString(this)
     }
 
     private fun getCurrentThreadContainer(): ThreadContainer {
@@ -62,19 +65,41 @@ class CallLogger {
         return threads[id] ?: error("Thread container with id=$id is not found")
     }
 
-    private fun updateCurrent(call: Call?) {
+    private fun updateCurrentCall(call: Call?) {
         if (call != null) {
             val t = getCurrentThreadContainer()
-            history.add(call)
             t.currentCall = call
         }
+    }
+
+    private fun addPushStackInstruction(call: Call) {
+        val t = getCurrentThreadContainer()
+        val stack = stacks.getOrPut(t.id.id) { mutableListOf() }
+        stack.add(
+            StackInstruction.Push(
+                call.id.toJavaUuid().toString(),
+                System.nanoTime(),
+                Uuid.random().toJavaUuid().toString()
+            )
+        )
+    }
+
+    private fun addPopStackInstruction() {
+        val t = getCurrentThreadContainer()
+        val stack = stacks.getOrPut(t.id.id) { mutableListOf() }
+        stack.add(
+            StackInstruction.Pop(
+                System.nanoTime(),
+                Uuid.random().toJavaUuid().toString()
+            )
+        )
     }
 
     private fun newCall(callFqn: String) =
         Call(
             id = Uuid.random(),
             fqn = callFqn,
-            start = System.currentTimeMillis(),
+            start = System.nanoTime(),
             end = -1,
             thread = ThreadId(Thread.currentThread().id, Thread.currentThread().name)
         )
@@ -107,4 +132,9 @@ class CallLogger {
         @JvmStatic
         val instance = CallLogger()
     }
+}
+
+sealed class StackInstruction(val id: String, val start: Long) {
+    class Push(val nodeId: String, start: Long, id: String) : StackInstruction(id, start)
+    class Pop(start: Long, id: String) : StackInstruction(id, start)
 }
