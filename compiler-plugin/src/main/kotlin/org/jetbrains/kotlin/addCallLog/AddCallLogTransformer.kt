@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.isGetter
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -26,6 +27,9 @@ class AddCallLogTransformer(
     private val excludedFiles: List<String>,
     private val context: IrPluginContext
 ) : IrElementTransformerVoidWithContext() {
+
+    private val skipGetters = true
+
     private val excludedPatterns: List<Regex> = excludedFqns.map { pattern ->
         pattern.replace(".", "\\.").replace("*", ".*").toRegex()
     }
@@ -45,6 +49,7 @@ class AddCallLogTransformer(
 
     private fun traceDeclaration(declaration: IrFunction) {
         val fqn = declaration.safeIrFunctionFqn()
+        if (skipGetters && declaration.isGetter) return
         if (excludedFiles.contains(declaration.file.name)) return
         if (excludedPatterns.any { it.matches(fqn) }) return
         if (fqn.contains(CLASS_NAME)) return
